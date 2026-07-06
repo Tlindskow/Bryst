@@ -1,0 +1,6 @@
+# Kildemateriale — ophavsretligt beskyttet tredjepartsmateriale, ikke i git.
+# (Dataene er ekstraheret/verificeret ind i index.html, som til gengæld ER i repoet.)
+DBCG.pdf
+Mentorkatalog.pdf
+
+.DS_Store
