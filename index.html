@@ -779,6 +779,12 @@
     </div>
 
     <div class="field">
+      <label>Brysthøjde <span class="value"><span id="heightVal" class="num">11.5</span> cm</span></label>
+      <input type="range" id="heightIn" min="7" max="16" step="0.1" value="11.5">
+      <div class="hint">Kun relevant ved anatomisk form — runde implantater har ingen selvstændig højde. Målt vertikal base-dimension.</div>
+    </div>
+
+    <div class="field">
       <label>Superior pole pinch <span class="value"><span id="sppVal" class="num">24</span> mm</span></label>
       <input type="range" id="spp" min="5" max="50" step="1" value="24">
       <div class="hint">≥30&nbsp;mm tillader subglandulær/subfasciel lomme (Tebbetts, opdateret 2025-grænse).</div>
@@ -1090,6 +1096,14 @@ window.Bryst = (function(){
       item._widthDelta = Math.abs(w - targetDiameter);
       item._volDelta = Math.abs(v - s.vol);
       item._score = item._widthDelta * 3 + (item._volDelta / 100);
+      // Anatomiske implantater har en selvstændig højde-dimension (ud over bredde/volumen) —
+      // runde implantater har ingen tilsvarende parameter, så højde indgår kun i scoringen her.
+      if (item.shape === 'anatomical' && item.height_cm != null && s.height != null){
+        item._heightDelta = Math.abs(item.height_cm - s.height);
+        item._score += item._heightDelta * 3;
+      } else {
+        item._heightDelta = null;
+      }
     });
 
     candidates.sort(function(a, b){ return a._score - b._score; });
@@ -1261,6 +1275,7 @@ window.Bryst = (function(){
     context: 'augmentation',
     expanderSearch: false,
     width: 12.5,
+    height: 11.5,
     spp: 24,
     ipp: 10,
     vol: 320,
@@ -1304,6 +1319,7 @@ window.Bryst = (function(){
     });
   }
   wireSlider('width', 'widthVal', 'width', 1);
+  wireSlider('heightIn', 'heightVal', 'height', 1);
   wireSlider('spp', 'sppVal', 'spp', 0);
   wireSlider('ipp', 'ippVal', 'ipp', 0);
   wireSlider('vol', 'volVal', 'vol', 0);
@@ -1314,9 +1330,10 @@ window.Bryst = (function(){
       'Katalog#: ' + Bryst.catalogLabel(item) + '\n' +
       'Volumen: ' + (item.volume_cc || item.nominal_final_volume_cc) + ' cc' +
       (Bryst.widthOf(item) ? ' · Diameter/bredde: ' + Bryst.widthOf(item).toFixed(1) + ' cm' : '') +
+      (item.height_cm ? ' · Højde: ' + item.height_cm.toFixed(1) + ' cm' : '') +
       (item.projection_cm ? ' · Projektion: ' + item.projection_cm.toFixed(1) + ' cm' : '') + '\n' +
       'Placering: [udfyldes]  ·  Incision: [udfyldes]\n' +
-      'Mål lagt til grund: brystbredde ' + state.width.toFixed(1) + ' cm, superior pinch ' + state.spp + ' mm, inferior pinch ' + state.ipp + ' mm, ønsket volumen ' + state.vol + ' cc.\n' +
+      'Mål lagt til grund: brystbredde ' + state.width.toFixed(1) + ' cm, brysthøjde ' + state.height.toFixed(1) + ' cm, superior pinch ' + state.spp + ' mm, inferior pinch ' + state.ipp + ' mm, ønsket volumen ' + state.vol + ' cc.\n' +
       'Endeligt implantat afgøres peroperativt med sizer. Datagrundlag: Mentor Product Guide, effective 2023.';
     return journalLine;
   }
@@ -1339,13 +1356,14 @@ window.Bryst = (function(){
             '<div class="dims">' +
               '<span><b>Vol</b>' + (item.volume_cc || item.nominal_final_volume_cc) + ' cc</span>' +
               (Bryst.widthOf(item) ? '<span><b>Ø/B</b>' + Bryst.widthOf(item).toFixed(1) + ' cm</span>' : '') +
+              (item.height_cm ? '<span><b>Højde</b>' + item.height_cm.toFixed(1) + ' cm</span>' : '') +
               (item.projection_cm ? '<span><b>Proj</b>' + item.projection_cm.toFixed(1) + ' cm</span>' : '') +
             '</div>' +
             '<div class="codes">' + Bryst.catalogLabel(item) + '</div>' +
           '</div>' +
           '<div class="actions">' +
             '<button class="copy-btn" data-idx="' + i + '">Kopiér journaltekst</button>' +
-            '<span class="match-score">Δ bredde ' + item._widthDelta.toFixed(1) + ' cm</span>' +
+            '<span class="match-score">Δ bredde ' + item._widthDelta.toFixed(1) + ' cm' + (item._heightDelta != null ? ' · Δ højde ' + item._heightDelta.toFixed(1) + ' cm' : '') + '</span>' +
           '</div>' +
         '</div>';
       }).join('') + '</div>';
