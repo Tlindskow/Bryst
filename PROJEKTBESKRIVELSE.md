@@ -20,7 +20,7 @@ Et simpelt, overskueligt værktøj i tre moduler, som styrker patientens overbli
 
 Filtermotor over Mentor-kataloget, ikke en algoritme der udpeger "det rigtige implantat" (findes ikke valideret; nærmeste ramme er vævsbaseret planlægning à la Tebbetts High Five).
 
-- Input: brystbredde → diameterinterval; vævsdække/pinch test → profil/projektion; ønsket volumen; glat/tekstureret; rund/anatomisk; ekspander/Becker til rekonstruktion.
+- Input: brystbredde → diameterinterval; brysthøjde → højdeinterval (kun anatomiske/CPG-implantater, som har højde som selvstændig tredje dimension ud over bredde/volumen — runde implantater har ingen tilsvarende parameter); vævsdække/pinch test → profil/projektion; ønsket volumen; glat/tekstureret; rund/anatomisk; ekspander/Becker til rekonstruktion.
 - Output: shortlist på 3–6 implantater med matchende sizer (katalognr. + sizer-nr., volumen, diameter, projektion, lower pole arc).
 - **Kopi-knap:** kopierer valgt implantat + sizer + en fast skabelon-journaltekst med indsatte værdier (ikke frit genereret tekst). Overvej DBIR-felter. Teksten skal afspejle at der ved konsultationen vælges en *plan* (type/interval) — det endelige implantat afgøres peroperativt med sizer.
 - **Datakvalitet:** Katalogdata ekstraheres og verificeres 100 % manuelt mod PDF'en — ét forkert katalognummer er en patientsikkerhedshændelse. Tjek om produkter i 2023-kataloget er udgået.
