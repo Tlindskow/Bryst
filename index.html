@@ -44,6 +44,30 @@
 
   .num{ font-family:var(--mono); font-variant-numeric: tabular-nums; }
 
+  /* ---------- Adgangslås (PIN) ---------- */
+  .gate{
+    position:fixed; inset:0; z-index:1000;
+    background:var(--paper); display:flex; align-items:center; justify-content:center;
+  }
+  .gate[hidden]{ display:none; }
+  .gate-box{
+    text-align:center; padding:20px;
+  }
+  .gate-title{ font-family:var(--mono); font-size:14px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink); margin-bottom:6px; }
+  .gate-hint{ font-size:12.5px; color:var(--ink-soft); margin-bottom:16px; }
+  .gate-input{
+    display:block; margin:0 auto 14px; width:160px; text-align:center;
+    font-family:var(--mono); font-size:22px; letter-spacing:.3em; padding:10px 12px;
+    border:1px solid var(--line-strong); background:var(--paper-raised); color:var(--ink);
+  }
+  .gate-input:focus-visible{ outline:2px solid var(--focus); outline-offset:2px; }
+  .gate-error{ font-size:12px; color:var(--redline); margin-bottom:10px; }
+  .gate-btn{
+    font-family:var(--sans); font-size:13px; font-weight:600; padding:9px 26px;
+    background:var(--ink); color:var(--paper); border:none; cursor:pointer;
+  }
+  .gate-btn:hover{ background:#0f1614; }
+
   /* ---------- App shell / router ---------- */
   .screen{ display:none; }
   .screen.active{ display:block; }
@@ -680,6 +704,16 @@
 </head>
 <body>
 
+<div id="gate" class="gate">
+  <form id="gateForm" class="gate-box">
+    <div class="gate-title">Bryst</div>
+    <div class="gate-hint">Indtast PIN</div>
+    <input type="password" inputmode="numeric" autocomplete="off" id="gatePin" class="gate-input" maxlength="8" autofocus>
+    <div class="gate-error" id="gateError" hidden>Forkert PIN</div>
+    <button type="submit" class="gate-btn">Åbn</button>
+  </form>
+</div>
+
 <div id="screen-picker" class="screen active">
   <div class="picker">
     <div class="picker-title">Bryst</div>
@@ -1162,6 +1196,42 @@ window.Bryst = (function(){
     copyToClipboard: copyToClipboard,
     showManualCopyPanel: showManualCopyPanel
   };
+})();
+</script>
+
+<script>
+// ---------- Adgangslås (PIN, 30 dages login) ----------
+// Klient-side lås, samme mønster som nulpunkt.net's øvrige PIN-beskyttede sider.
+// Ikke reel sikkerhed — kun en dæmper mod tilfældige besøgende/søgemaskineindeksering.
+(function(){
+  "use strict";
+  var PIN_B64 = "ODg1MA=="; // "8850"
+  var THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+  var gate = document.getElementById('gate');
+
+  function isAuthed(){
+    try {
+      var ts = parseInt(localStorage.getItem('bryst_auth_ts'), 10);
+      return ts && (Date.now() - ts) < THIRTY_DAYS;
+    } catch (e) { return false; }
+  }
+
+  if (isAuthed()){
+    gate.hidden = true;
+  } else {
+    document.getElementById('gateForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      var val = document.getElementById('gatePin').value;
+      if (btoa(val) === PIN_B64){
+        try { localStorage.setItem('bryst_auth_ts', String(Date.now())); } catch (e) {}
+        gate.hidden = true;
+      } else {
+        document.getElementById('gateError').hidden = false;
+        document.getElementById('gatePin').value = '';
+        document.getElementById('gatePin').focus();
+      }
+    });
+  }
 })();
 </script>
 
