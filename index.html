@@ -72,27 +72,133 @@
   .screen{ display:none; }
   .screen.active{ display:block; }
 
-  .picker{
-    min-height:100vh;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:36px;
-    background:var(--paper);
-    padding:40px 20px;
+  /* ---------- Forside: fire døre, ét instrument ---------- */
+  .entry{
+    position:relative; min-height:100vh;
+    display:flex; flex-direction:column;
+    background:var(--paper); overflow:hidden;
   }
-  .picker .picker-title{
-    font-family:var(--mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase;
-    color:var(--ink-soft);
+  .entry-contours{ position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+  .entry-bg{
+    position:absolute; inset:-4%;
+    background:url("assets/forside-kontur.jpg") center / cover no-repeat;
+    opacity:.85; will-change:transform;
   }
-  .picker-cards{ display:flex; gap:20px; flex-wrap:wrap; justify-content:center; max-width:760px; }
-  .picker-card{
-    width:280px; text-align:left; padding:26px 22px; background:var(--paper-raised);
-    border:1px solid var(--line-strong); text-decoration:none; color:var(--ink);
-    display:block; transition:border-color .15s ease;
+
+  .entry-hero{ position:relative; text-align:center; padding:8vh 24px 5vh; will-change:transform; }
+  .entry-eyebrow{
+    font-family:var(--mono); font-size:11px; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--ink-soft); margin-bottom:14px;
   }
-  .picker-card:hover{ border-color:var(--redline); }
-  .picker-card .eyebrow{ font-family:var(--mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--redline); margin-bottom:8px; display:block; }
-  .picker-card h2{ font-size:17px; margin:0 0 8px; font-weight:700; }
-  .picker-card p{ font-size:12.5px; color:var(--ink-soft); margin:0; line-height:1.5; }
+  .entry-wordmark{
+    font-size:clamp(58px, 11vw, 138px); font-weight:800; letter-spacing:-.035em;
+    line-height:.95; margin:0; color:var(--ink);
+  }
+  .entry-dim{
+    display:flex; align-items:center; gap:10px;
+    max-width:560px; margin:22px auto 0;
+  }
+  .entry-dim .dim-tick{ width:1px; height:11px; background:var(--redline); flex:none; }
+  .entry-dim .dim-line{ flex:1; height:1px; background:var(--redline); transform-origin:center; }
+  .entry-dim .dim-label{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; color:var(--redline); white-space:nowrap;
+  }
+  .entry-sub{
+    font-size:13.5px; color:var(--ink-soft); max-width:460px; margin:18px auto 0; line-height:1.6;
+  }
+
+  .doors{ position:relative; display:flex; flex:1; min-height:340px; border-top:1px solid var(--line); }
+  .door{
+    flex:1 1 0; display:flex; flex-direction:column; gap:5px;
+    padding:26px 26px 30px; text-decoration:none; position:relative; overflow:hidden;
+    transition:flex-grow .5s cubic-bezier(.22,.8,.3,1);
+    border-left:1px solid rgba(28,38,36,.08);
+  }
+  .door:first-child{ border-left:none; }
+  .door:hover, .door:focus-visible{ flex-grow:1.5; }
+  .door:focus-visible{ outline:2px solid var(--focus); outline-offset:-4px; }
+  .door::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:3px;
+    background:var(--door-acc); transform:scaleX(0); transform-origin:left;
+    transition:transform .45s cubic-bezier(.22,.8,.3,1);
+  }
+  .door:hover::before, .door:focus-visible::before{ transform:scaleX(1); }
+  .door-sil{ width:min(150px, 68%); height:auto; margin-bottom:auto; opacity:.85; }
+  .door-eyebrow{
+    font-family:var(--mono); font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--door-acc); margin-top:22px;
+  }
+  .door-name{ font-size:20px; font-weight:700; line-height:1.25; }
+  .door-desc{
+    font-size:12.5px; line-height:1.55; opacity:0; max-height:0; overflow:hidden;
+    transition:opacity .4s ease .1s, max-height .45s cubic-bezier(.22,.8,.3,1);
+  }
+  .door:hover .door-desc, .door:focus-visible .door-desc{ opacity:.85; max-height:120px; }
+  .door-cta{
+    font-family:var(--mono); font-size:11px; letter-spacing:.1em; margin-top:10px;
+    color:var(--door-acc); opacity:.65; transition:opacity .3s ease, transform .3s ease;
+  }
+  .door:hover .door-cta, .door:focus-visible .door-cta{ opacity:1; transform:translateX(4px); }
+
+  .door-m1{ --door-acc:#9C3B2B; background:#FFFFFF; color:#1C2624; }
+  .door-m1 .door-desc{ color:#5B6B67; }
+  .door-m3{ --door-acc:#9C4F60; background:#FBF3F0; color:#2E1B20; }
+  .door-m3 .door-name{ font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif; font-weight:400; font-size:22px; }
+  .door-m3 .door-desc{ color:#7A5A61; }
+  .door-m2{ --door-acc:#4F5F52; background:#F3EFE9; color:#322E2A; }
+  .door-m2 .door-desc{ color:#6B655E; }
+  .door-k{ --door-acc:#7FD1DE; background:linear-gradient(165deg,#155A66,#1F7A8C); color:#fff; }
+  .door-k .door-desc{ color:rgba(255,255,255,.8); }
+
+  .door-sil .s-ink{ fill:none; stroke:currentColor; stroke-width:1.3; stroke-linecap:round; }
+  .door-sil .s-acc{ fill:none; stroke:var(--door-acc); stroke-width:1; stroke-linecap:round; }
+  .door-sil .s-txt{ font-family:var(--mono); font-size:8px; fill:var(--door-acc); }
+  .door-sil .s-soft{ fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; opacity:.9; }
+  .door-sil path.s-draw, .door-sil circle.s-draw{
+    stroke-dasharray:320; stroke-dashoffset:320;
+    animation:silDraw 1.4s cubic-bezier(.4,0,.3,1) .45s forwards;
+  }
+  @keyframes silDraw{ to{ stroke-dashoffset:0; } }
+
+  .entry-stamp{
+    position:relative; text-align:center; padding:12px 20px;
+    font-family:var(--mono); font-size:10px; letter-spacing:.05em; color:var(--ink-faint);
+    background:var(--paper); border-top:1px solid var(--line);
+  }
+
+  @keyframes entryRise{ from{ opacity:0; transform:translateY(24px); } to{ opacity:1; transform:none; } }
+  .entry-hero > *{ animation:entryRise .7s cubic-bezier(.22,.8,.3,1) both; }
+  .entry-hero > :nth-child(2){ animation-delay:.07s; }
+  .entry-hero > :nth-child(3){ animation-delay:.16s; }
+  .entry-hero > :nth-child(4){ animation-delay:.24s; }
+  .entry-dim .dim-line{ animation:dimDraw .9s cubic-bezier(.22,.8,.3,1) .3s both; }
+  @keyframes dimDraw{ from{ transform:scaleX(0); } to{ transform:scaleX(1); } }
+  .door{ animation:entryRise .75s cubic-bezier(.22,.8,.3,1) both; }
+  .door:nth-child(1){ animation-delay:.12s; }
+  .door:nth-child(2){ animation-delay:.2s; }
+  .door:nth-child(3){ animation-delay:.28s; }
+  .door:nth-child(4){ animation-delay:.36s; }
+
+  @media (max-width: 880px){
+    .entry{ min-height:100svh; }
+    .entry-hero{ padding-top:10vh; }
+    .doors{ flex-direction:column; }
+    .door{ min-height:132px; border-left:none; border-top:1px solid rgba(28,38,36,.08); padding:20px 22px; }
+    .door:hover, .door:focus-visible{ flex-grow:1; }
+    .door-desc{ opacity:.85; max-height:none; }
+    .door-sil{ display:none; }
+    .door-eyebrow{ margin-top:0; }
+  }
+  @media (hover: none){
+    .door-desc{ opacity:.85; max-height:none; }
+    .door-cta{ opacity:1; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .entry-hero > *, .door, .entry-dim .dim-line, .door-sil path.s-draw, .door-sil circle.s-draw{ animation:none; }
+    .door-sil path.s-draw, .door-sil circle.s-draw{ stroke-dashoffset:0; }
+    .door, .door::before, .door-desc, .door-cta{ transition:none; }
+  }
+
   .back-link{
     font-family:var(--mono); font-size:11px; color:var(--ink-faint); text-decoration:none;
     letter-spacing:.06em;
@@ -243,6 +349,46 @@
     font-size:12.5px; color:var(--ink-soft);
     margin-top:10px;
   }
+
+  /* utilgængelig kombination: skraveret, kan ikke vælges */
+  .toggle-row button.unavailable{
+    color:var(--ink-faint);
+    cursor:not-allowed;
+    background:repeating-linear-gradient(-45deg, var(--paper-raised), var(--paper-raised) 5px, #ECEFEC 5px, #ECEFEC 7px);
+  }
+  .toggle-row.inert{ opacity:.45; pointer-events:none; }
+
+  .return-bar[hidden]{ display:none; }
+  .return-bar{
+    display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap;
+    padding:10px 24px;
+    background:var(--redline-wash);
+    border-bottom:1px solid var(--redline-soft);
+    font-size:12.5px; color:var(--ink-soft);
+  }
+  .return-bar b{ color:var(--ink); }
+  .return-bar a{ color:var(--redline); font-weight:600; text-decoration:none; }
+  .return-bar a:hover{ text-decoration:underline; }
+
+  .expander-suggest{
+    margin-top:8px; padding:6px 10px;
+    background:var(--redline-wash); border-left:2px solid var(--redline);
+    font-size:11.5px; color:var(--ink-soft);
+  }
+  .expander-suggest b{ color:var(--ink); font-family:var(--mono); font-weight:600; }
+  .expander-suggest .es-label{
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--redline); display:block; margin-bottom:2px;
+  }
+
+  button.pick-btn{
+    font-family:var(--sans); font-size:12px; font-weight:600;
+    padding:6px 12px; background:none; color:var(--ink-soft);
+    border:1px solid var(--line-strong); cursor:pointer; white-space:nowrap;
+  }
+  button.pick-btn:hover{ border-color:var(--redline); color:var(--ink); }
+  button.pick-btn.picked{ background:var(--redline); border-color:var(--redline); color:var(--paper); }
+  button.pick-btn:focus-visible{ outline:2px solid var(--focus); outline-offset:2px; }
 
   .divider{ height:1px; background:var(--line); margin:22px 0; }
 
@@ -480,6 +626,30 @@
   }
   .m3-stamp{ text-align:center; font-family:var(--sans); font-size:10.5px; color:var(--plum-faint); margin-top:8px; }
 
+  /* ---- Kobling til Modul 1 (implantatvalg) fra patientmodulerne ---- */
+  .m3-open-m1{
+    display:inline-block; margin-top:10px; font-size:12px; font-family:var(--sans); font-weight:600;
+    color:var(--dusty-rose-deep); text-decoration:none; border-bottom:1px solid var(--taupe-line); padding-bottom:1px;
+  }
+  .m3-open-m1:hover{ border-color:var(--dusty-rose-deep); }
+  .m2-open-m1{
+    display:inline-block; margin-top:10px; font-size:12.5px; font-weight:600;
+    color:var(--sage-deep); text-decoration:none; border-bottom:1px solid var(--line-warm); padding-bottom:1px;
+  }
+  .m2-open-m1:hover{ border-color:var(--sage-deep); }
+
+  .pick-box{ margin-top:30px; padding:20px 22px; background:#fff; }
+  .pick-box-head{ font-weight:600; font-size:15px; margin-bottom:4px; }
+  .pick-box-sub{ font-size:12.5px; margin-bottom:14px; opacity:.75; }
+  .pick-line{ display:flex; gap:10px; align-items:baseline; font-size:13px; margin-bottom:9px; cursor:pointer; line-height:1.5; }
+  #screen-modul3 .pick-box{ border:1px solid var(--taupe-line); }
+  #screen-modul3 .pick-box-head{ font-family:var(--serif); font-size:17px; font-weight:400; }
+  #screen-modul3 .pick-box-sub{ color:var(--plum-soft); }
+  #screen-modul3 .pick-line input{ accent-color:var(--dusty-rose-deep); }
+  #screen-modul2 .pick-box{ border:1px solid var(--line-warm); border-radius:5px; }
+  #screen-modul2 .pick-box-sub{ color:var(--ink2-soft); }
+  #screen-modul2 .pick-line input{ accent-color:var(--sage-deep); }
+
   /* ================= MODUL 2 — Sygehusmodul (roligt, nedtonet, sagligt) ================= */
   #screen-modul2{
     --linen:#F3EFE9;
@@ -620,6 +790,25 @@
   .k-search .k-search-icon{ position:absolute; left:14px; top:50%; transform:translateY(-50%); opacity:.5; font-size:14px; }
   .k-search-count{ font-size:11.5px; opacity:.8; margin-top:8px; }
 
+  .k-volpivot{ margin-top:14px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:12.5px; }
+  .k-volpivot label{ opacity:.9; }
+  .k-volpivot input{
+    width:74px; padding:7px 9px; border:none; border-radius:5px;
+    font-family:var(--mono); font-size:13px; color:var(--k-ink); text-align:center;
+  }
+  .k-volpivot input#kVolTol{ width:56px; }
+  .k-volpivot input:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+  .k-volpm{ opacity:.8; }
+  .k-volpivot-hint{ font-size:11px; opacity:.65; flex-basis:100%; }
+
+  .k-sim-btn{
+    font-family:var(--sans); font-size:11px; font-weight:700; color:var(--teal-deep);
+    background:none; border:1px solid var(--k-line); border-radius:4px; padding:4px 8px; cursor:pointer;
+  }
+  .k-sim-btn:hover{ background:var(--teal-pale); border-color:var(--teal); }
+  td.k-actcell{ white-space:nowrap; }
+  .k-vol-head{ font-size:12.5px; color:var(--k-ink-soft); margin-bottom:14px; }
+
   .k-body{ max-width:980px; margin:0 auto; padding:28px 32px 100px; }
 
   .k-family{ margin-bottom:14px; border:1px solid var(--k-line); background:var(--k-paper); }
@@ -715,30 +904,74 @@
 </div>
 
 <div id="screen-picker" class="screen active">
-  <div class="picker">
-    <div class="picker-title">Bryst</div>
-    <div class="picker-cards">
-      <a class="picker-card" href="#modul1">
-        <span class="eyebrow">Modul 1</span>
-        <h2>Lægemodul</h2>
-        <p>Implantatvalg — filtermotor over Mentor-kataloget. Brystbredde, pinch test, volumen, tekstur og form. Til brug på sygehus og i privatklinik.</p>
-      </a>
-      <a class="picker-card" href="#modul3">
-        <span class="eyebrow">Modul 3</span>
-        <h2>Privatmodul</h2>
-        <p>Patientvendt samtaleflow for augmentation: implantat, fedtoverførsel, løft eller kombination — fordele og ulemper side om side.</p>
-      </a>
-      <a class="picker-card" href="#modul2">
-        <span class="eyebrow">Modul 2</span>
-        <h2>Sygehusmodul</h2>
-        <p>Patientvendt samtaleflow for brystrekonstruktion efter mastektomi: implantat, ekspander, autolog lap eller kombination — jf. DBCG v3.1.</p>
-      </a>
-      <a class="picker-card" href="#katalog">
-        <span class="eyebrow">Tillæg</span>
-        <h2>Digitalt katalog</h2>
-        <p>Hele Mentor-kataloget som opslagsværktøj — søgning, browsing pr. produktfamilie, og sammenligning side om side.</p>
-      </a>
+  <div class="entry">
+    <div class="entry-contours" aria-hidden="true">
+      <div class="entry-bg"></div>
     </div>
+
+    <header class="entry-hero">
+      <div class="entry-eyebrow">Plastikkirurgisk konsultationsinstrument</div>
+      <h1 class="entry-wordmark">Bryst</h1>
+      <div class="entry-dim" aria-hidden="true">
+        <span class="dim-tick"></span><span class="dim-line"></span>
+        <span class="dim-label">fire moduler · én delt motor · 462 katalogvarianter</span>
+        <span class="dim-line"></span><span class="dim-tick"></span>
+      </div>
+      <p class="entry-sub">Implantatvalg, brystrekonstruktion og augmentation. Værktøjet filtrerer og sammenligner — valget træffes i samtalen.</p>
+    </header>
+
+    <nav class="doors">
+      <a class="door door-m1" href="#modul1">
+        <svg class="door-sil" viewBox="0 0 140 92" aria-hidden="true">
+          <circle class="s-ink s-draw" cx="46" cy="38" r="26"/>
+          <path class="s-ink s-draw" d="M 86 12 Q 106 38 86 64"/>
+          <line class="s-acc" x1="20" y1="74" x2="72" y2="74"/>
+          <line class="s-acc" x1="20" y1="70" x2="20" y2="78"/>
+          <line class="s-acc" x1="72" y1="70" x2="72" y2="78"/>
+          <text class="s-txt" x="31" y="87">12.5 cm</text>
+        </svg>
+        <span class="door-eyebrow">Modul 1 · Lægemodul</span>
+        <span class="door-name">Implantatvalg</span>
+        <span class="door-desc">Filtermotor over hele Mentor-kataloget: brystbredde, pinch test, volumen, tekstur og form — shortlist med journaltekst.</span>
+        <span class="door-cta">Åbn →</span>
+      </a>
+      <a class="door door-m3" href="#modul3">
+        <svg class="door-sil" viewBox="0 0 140 92" aria-hidden="true">
+          <path class="s-soft s-draw" d="M22,74 C 30,26 68,10 96,40 C 110,56 102,72 80,78"/>
+          <path class="s-acc s-draw" d="M40,70 C 46,46 66,38 82,52"/>
+        </svg>
+        <span class="door-eyebrow">Modul 3 · Privatmodul</span>
+        <span class="door-name">Augmentation</span>
+        <span class="door-desc">Samtaleflow for brystforstørrelse: implantat, fedtoverførsel, løft eller kombination — fordele og ulemper side om side.</span>
+        <span class="door-cta">Åbn →</span>
+      </a>
+      <a class="door door-m2" href="#modul2">
+        <svg class="door-sil" viewBox="0 0 140 92" aria-hidden="true">
+          <path class="s-soft s-draw" d="M20,66 C 28,34 58,20 82,36 C 94,45 90,60 72,66"/>
+          <line class="s-acc" x1="14" y1="78" x2="118" y2="78"/>
+        </svg>
+        <span class="door-eyebrow">Modul 2 · Sygehusmodul</span>
+        <span class="door-name">Rekonstruktion</span>
+        <span class="door-desc">Samtaleflow efter mastektomi: implantat, ekspander, autolog lap eller kombination — jf. DBCG v3.1.</span>
+        <span class="door-cta">Åbn →</span>
+      </a>
+      <a class="door door-k" href="#katalog">
+        <svg class="door-sil" viewBox="0 0 140 92" aria-hidden="true">
+          <rect class="s-ink" x="18" y="16" width="92" height="52" rx="2"/>
+          <line class="s-ink" x1="18" y1="32" x2="110" y2="32"/>
+          <line class="s-ink" x1="52" y1="16" x2="52" y2="68"/>
+          <line class="s-ink" x1="82" y1="16" x2="82" y2="68"/>
+          <circle class="s-acc s-draw" cx="104" cy="62" r="12"/>
+          <line class="s-acc" x1="113" y1="71" x2="122" y2="80"/>
+        </svg>
+        <span class="door-eyebrow">Tillæg · Opslagsværk</span>
+        <span class="door-name">Digitalt katalog</span>
+        <span class="door-desc">Hele Mentor-kataloget: søgning, volumen-opslag på tværs af serier og sammenligning side om side.</span>
+        <span class="door-cta">Åbn →</span>
+      </a>
+    </nav>
+
+    <footer class="entry-stamp">Datagrundlag: Mentor Product Guide 2023 · DBCG v3.1 (godk. 27-11-2024) · 100 % stateless — intet gemmes</footer>
   </div>
 </div>
 
@@ -753,6 +986,11 @@
     <span id="entryCount">—</span> katalogvarianter indlæst
   </div>
 </header>
+
+<div class="return-bar" id="m1ReturnBar" hidden>
+  <span>Åbnet fra <b id="m1ReturnName">patientmodulet</b> — markér implantater med »Til patientoversigt«, så følger de med til den printbare oversigt.</span>
+  <span><span class="num" id="m1PickCount">0</span> valgt · <a href="#" id="m1ReturnLink">← Tilbage til samtalen</a></span>
+</div>
 
 <div class="console">
   <div class="panel">
@@ -799,6 +1037,7 @@
     <div class="field">
       <label>Ønsket volumen <span class="value"><span id="volVal" class="num">320</span> cc</span></label>
       <input type="range" id="vol" min="100" max="800" step="5" value="320">
+      <div class="hint" id="volHint">Shortlisten viser de nærmeste varianter både over og under det valgte volumen.</div>
     </div>
 
     <div class="divider"></div>
@@ -817,6 +1056,7 @@
         <button data-val="round">Rund</button>
         <button data-val="anatomical">Anatomisk</button>
       </div>
+      <div class="hint" id="shapeHint"></div>
     </div>
   </div>
 
@@ -920,6 +1160,7 @@
         <p>Ingen af mulighederne er rangeret — lægen supplerer mundtligt.</p>
       </div>
       <div class="m2-compare" id="m2Compare"></div>
+      <div id="m2PicksBox"></div>
       <div class="m2-actions">
         <button class="m2-btn secondary" id="m2BackToOverview">← Tilbage</button>
         <button class="m2-btn" id="m2ExportPdf">Eksportér PDF</button>
@@ -999,6 +1240,7 @@
         <p>Ingen af mulighederne er rangeret — lægen supplerer mundtligt.</p>
       </div>
       <div class="m3-compare" id="m3Compare"></div>
+      <div id="m3PicksBox"></div>
       <div class="m3-actions">
         <button class="m3-btn secondary" id="m3BackToOverview">← Tilbage</button>
         <button class="m3-btn" id="m3ExportPdf">Eksportér PDF</button>
@@ -1022,10 +1264,18 @@
       <input type="text" id="kSearch" placeholder="Søg på katalognr., sizer eller produktnavn…" autocomplete="off">
     </div>
     <div class="k-search-count" id="kSearchCount"></div>
+    <div class="k-volpivot">
+      <label for="kVolInput">Eller slå op på volumen:</label>
+      <input type="number" id="kVolInput" min="100" max="900" step="5" placeholder="350"> cc
+      <span class="k-volpm">±</span>
+      <input type="number" id="kVolTol" value="25" min="5" max="100" step="5"> cc
+      <span class="k-volpivot-hint">viser alle serier ved samme volumen — sammenlign bredde og projektion direkte</span>
+    </div>
   </div>
 
   <div class="k-body">
     <div id="kResultsView"></div>
+    <div id="kVolumeView"></div>
     <div id="kFamiliesView"></div>
   </div>
 
@@ -1071,6 +1321,10 @@ window.Bryst = (function(){
     return item.diameter_cm != null ? item.diameter_cm : item.width_cm;
   }
 
+  function volumeOf(item){
+    return item.volume_cc != null ? item.volume_cc : item.nominal_final_volume_cc;
+  }
+
   function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
 
   function filterImplants(s){
@@ -1107,7 +1361,52 @@ window.Bryst = (function(){
     });
 
     candidates.sort(function(a, b){ return a._score - b._score; });
-    return { targetDiameter: targetDiameter, pinchCorrectionCm: pinchCorrectionCm, results: candidates.slice(0, 6) };
+    var results = candidates.slice(0, 6);
+
+    // Garantér at shortlisten indeholder nærmeste variant BÅDE over og under ønsket volumen
+    // (ellers kunne alle 6 ligge på samme side, når bredde-matchet trækker den vej).
+    var hasAbove = results.some(function(r){ return volumeOf(r) >= s.vol; });
+    var hasBelow = results.some(function(r){ return volumeOf(r) <= s.vol; });
+    if (!hasAbove && results.length > 0){
+      var above = candidates.filter(function(c){ return volumeOf(c) > s.vol; })[0];
+      if (above) results[results.length - 1] = above;
+    }
+    if (!hasBelow && results.length > 0){
+      var below = candidates.filter(function(c){ return volumeOf(c) < s.vol; })[0];
+      if (below) results[results.length - 1] = below;
+    }
+    results.sort(function(a, b){ return a._score - b._score; });
+
+    var vols = results.map(volumeOf);
+    return {
+      targetDiameter: targetDiameter,
+      pinchCorrectionCm: pinchCorrectionCm,
+      results: results,
+      volMin: vols.length ? Math.min.apply(null, vols) : null,
+      volMax: vols.length ? Math.max.apply(null, vols) : null
+    };
+  }
+
+  // Nærmeste ekspander til et permanent implantat (2-stadie-plan).
+  // Litteratur (Gabriel & Maxwell, Gland Surgery): endeligt implantat vælges typisk
+  // 0,25–1,0 cm bredere end ekspanderens base — derfor sigtes mod implantatbredde − 0,5 cm.
+  function suggestExpander(item){
+    var implW = widthOf(item);
+    var implV = volumeOf(item);
+    if (implW == null || implV == null) return null;
+    var best = null, bestScore = Infinity;
+    CATALOG.forEach(function(e){
+      if (e.category !== 'tissue-expander' && e.category !== 'smooth-tissue-expander') return;
+      var eW = widthOf(e);
+      if (eW == null || e.volume_cc == null) return;
+      var score = Math.abs(eW - (implW - 0.5)) * 3 + Math.abs(e.volume_cc - implV) / 100;
+      if (item.shape === 'anatomical' && item.height_cm != null){
+        // anatomisk implantat: match også ekspanderens højde; rund glat ekspander uden højde straffes let
+        score += e.height_cm != null ? Math.abs(e.height_cm - item.height_cm) * 2 : 2;
+      }
+      if (score < bestScore){ bestScore = score; best = e; }
+    });
+    return best;
   }
 
   function profileLabel(item){
@@ -1196,13 +1495,46 @@ window.Bryst = (function(){
     }
   }
 
+  // ---- Patientoversigt-valg: implantater markeret i Modul 1 til brug i Modul 2/3's
+  // printbare oversigt. Kun i hukommelsen (100% stateless) — væk når vinduet lukkes.
+  var picks = (function(){
+    var items = [];
+    var listeners = [];
+    function idOf(item){ return item.catalog || item.catalog_3_suture_tabs; }
+    function indexOf(item){
+      var id = idOf(item);
+      for (var i = 0; i < items.length; i++){ if (idOf(items[i]) === id) return i; }
+      return -1;
+    }
+    function emit(){ listeners.forEach(function(fn){ try { fn(); } catch (e) {} }); }
+    return {
+      idOf: idOf,
+      has: function(item){ return indexOf(item) > -1; },
+      toggle: function(item){
+        var i = indexOf(item);
+        if (i > -1) items.splice(i, 1); else items.push(item);
+        emit();
+      },
+      remove: function(item){
+        var i = indexOf(item);
+        if (i > -1){ items.splice(i, 1); emit(); }
+      },
+      list: function(){ return items.slice(); },
+      count: function(){ return items.length; },
+      onChange: function(fn){ listeners.push(fn); }
+    };
+  })();
+
   return {
     CATALOG: CATALOG,
     PERMANENT_CATEGORIES: PERMANENT_CATEGORIES,
     EXPANDER_CATEGORIES: EXPANDER_CATEGORIES,
     widthOf: widthOf,
+    volumeOf: volumeOf,
     clamp: clamp,
     filterImplants: filterImplants,
+    suggestExpander: suggestExpander,
+    picks: picks,
     profileLabel: profileLabel,
     textureLabel: textureLabel,
     catalogLabel: catalogLabel,
@@ -1255,11 +1587,37 @@ window.Bryst = (function(){
   "use strict";
   var screens = ['screen-picker', 'screen-modul1', 'screen-modul2', 'screen-modul3', 'screen-katalog'];
   function showScreen(hash){
-    var id = hash === '#modul1' ? 'screen-modul1' : hash === '#modul2' ? 'screen-modul2' : hash === '#modul3' ? 'screen-modul3' : hash === '#katalog' ? 'screen-katalog' : 'screen-picker';
+    // prefix-match, så fx #modul1?fra=modul2 (åbnet fra et patientmodul) også rammer Modul 1
+    function is(prefix){ return hash.indexOf(prefix) === 0; }
+    var id = is('#modul1') ? 'screen-modul1' : is('#modul2') ? 'screen-modul2' : is('#modul3') ? 'screen-modul3' : is('#katalog') ? 'screen-katalog' : 'screen-picker';
     screens.forEach(function(s){ document.getElementById(s).classList.toggle('active', s === id); });
+    window.scrollTo(0, 0);
   }
   window.addEventListener('hashchange', function(){ showScreen(location.hash); });
   showScreen(location.hash);
+})();
+</script>
+
+<script>
+// ---------- Forside: pointer-parallax på konturlagene (kun mus + fuld motion) ----------
+(function(){
+  "use strict";
+  if (!window.matchMedia('(pointer: fine)').matches) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var picker = document.getElementById('screen-picker');
+  var bg = picker.querySelector('.entry-bg');
+  var hero = picker.querySelector('.entry-hero');
+  var raf = null, px = 0, py = 0;
+  picker.addEventListener('pointermove', function(e){
+    px = e.clientX / window.innerWidth - 0.5;
+    py = e.clientY / window.innerHeight - 0.5;
+    if (raf) return;
+    raf = requestAnimationFrame(function(){
+      raf = null;
+      bg.style.transform = 'translate3d(' + (px * -22) + 'px,' + (py * -16) + 'px,0)';
+      hero.style.transform = 'translate3d(' + (px * 9) + 'px,' + (py * 6) + 'px,0)';
+    });
+  });
 })();
 </script>
 
@@ -1289,6 +1647,7 @@ window.Bryst = (function(){
     var row = $(id);
     row.querySelectorAll('button').forEach(function(btn){
       btn.addEventListener('click', function(){
+        if (btn.classList.contains('unavailable')) return;
         row.querySelectorAll('button').forEach(function(b){ b.classList.remove('active'); });
         btn.classList.add('active');
         state[key] = btn.dataset.val;
@@ -1296,6 +1655,36 @@ window.Bryst = (function(){
         render();
       });
     });
+  }
+
+  // Findes tekstur/form-kombinationen overhovedet i kataloget? (fx glat + anatomisk gør ikke)
+  function comboExists(texture, shape){
+    var cats = (state.context === 'reconstruction' && state.expanderSearch) ? Bryst.EXPANDER_CATEGORIES : Bryst.PERMANENT_CATEGORIES;
+    var expanderMode = cats === Bryst.EXPANDER_CATEGORIES;
+    return CATALOG.some(function(item){
+      if (cats.indexOf(item.category) === -1) return false;
+      if (texture !== 'any' && item.texture !== texture) return false;
+      if (!expanderMode && shape !== 'any' && item.shape !== shape) return false;
+      return true;
+    });
+  }
+
+  function updateAvailability(){
+    var expanderMode = state.context === 'reconstruction' && state.expanderSearch;
+    $('shapeToggle').classList.toggle('inert', expanderMode);
+    $('shapeHint').textContent = expanderMode ? 'Form filtreres ikke ved ekspander/Becker-søgning — ekspandere vælges på bredde/højde/volumen.' : '';
+    $('textureToggle').querySelectorAll('button').forEach(function(btn){
+      var ok = comboExists(btn.dataset.val, expanderMode ? 'any' : state.shape);
+      btn.classList.toggle('unavailable', !ok);
+      btn.title = ok ? '' : 'Kombinationen findes ikke i Mentor-kataloget';
+    });
+    if (!expanderMode){
+      $('shapeToggle').querySelectorAll('button').forEach(function(btn){
+        var ok = comboExists(state.texture, btn.dataset.val);
+        btn.classList.toggle('unavailable', !ok);
+        btn.title = ok ? '' : 'Kombinationen findes ikke i Mentor-kataloget';
+      });
+    }
   }
 
   wireToggle('ctxToggle', 'context', function(){
@@ -1325,6 +1714,13 @@ window.Bryst = (function(){
   wireSlider('vol', 'volVal', 'vol', 0);
 
   function copyText(item){
+    var expanderLine = '';
+    if (state.context === 'reconstruction' && !state.expanderSearch){
+      var exp = Bryst.suggestExpander(item);
+      if (exp){
+        expanderLine = 'Ved 2-stadie: nærmeste ekspander ' + exp.line + ', ' + Bryst.catalogLabel(exp) + ', ' + exp.volume_cc + ' cc, bredde ' + Bryst.widthOf(exp).toFixed(1) + ' cm' + (exp.height_cm ? ', højde ' + exp.height_cm.toFixed(1) + ' cm' : '') + '.\n';
+      }
+    }
     var journalLine = 'Implantatplan (Bryst-værktøj — filtrering, ikke endeligt valg)\n' +
       'Type: ' + Bryst.profileLabel(item) + (Bryst.textureLabel(item) ? ', ' + Bryst.textureLabel(item) : '') + '\n' +
       'Katalog#: ' + Bryst.catalogLabel(item) + '\n' +
@@ -1332,6 +1728,7 @@ window.Bryst = (function(){
       (Bryst.widthOf(item) ? ' · Diameter/bredde: ' + Bryst.widthOf(item).toFixed(1) + ' cm' : '') +
       (item.height_cm ? ' · Højde: ' + item.height_cm.toFixed(1) + ' cm' : '') +
       (item.projection_cm ? ' · Projektion: ' + item.projection_cm.toFixed(1) + ' cm' : '') + '\n' +
+      expanderLine +
       'Placering: [udfyldes]  ·  Incision: [udfyldes]\n' +
       'Mål lagt til grund: brystbredde ' + state.width.toFixed(1) + ' cm, brysthøjde ' + state.height.toFixed(1) + ' cm, superior pinch ' + state.spp + ' mm, inferior pinch ' + state.ipp + ' mm, ønsket volumen ' + state.vol + ' cc.\n' +
       'Endeligt implantat afgøres peroperativt med sizer. Datagrundlag: Mentor Product Guide, effective 2023.';
@@ -1339,15 +1736,36 @@ window.Bryst = (function(){
   }
 
   function render(){
+    updateAvailability();
     var out = Bryst.filterImplants(state);
     var container = $('resultsContainer');
     var countEl = $('resultCount');
     countEl.textContent = out.results.length;
 
+    if (out.results.length > 0 && out.volMin != null){
+      $('volHint').textContent = 'Shortlisten dækker lige nu ' + Math.round(out.volMin) + '–' + Math.round(out.volMax) + ' cc — nærmeste match både over og under det valgte volumen.';
+    } else {
+      $('volHint').textContent = 'Shortlisten viser de nærmeste varianter både over og under det valgte volumen.';
+    }
+
+    var suggestExpanders = state.context === 'reconstruction' && !state.expanderSearch;
+
     if (out.results.length === 0){
       container.innerHTML = '<div class="empty-state">Ingen implantater matcher de aktuelle mål. Udvid søgningen (fx skift overflade/form til "Alle").</div>';
     } else {
       container.innerHTML = '<div class="card-list">' + out.results.map(function(item, i){
+        var expHtml = '';
+        if (suggestExpanders){
+          var exp = Bryst.suggestExpander(item);
+          if (exp){
+            expHtml = '<div class="expander-suggest"><span class="es-label">Passende ekspander ved 2-stadie</span>' +
+              exp.line + ' · <b>' + Bryst.catalogLabel(exp) + '</b> · ' + exp.volume_cc + ' cc · ' +
+              Bryst.widthOf(exp).toFixed(1) + (exp.height_cm ? ' × ' + exp.height_cm.toFixed(1) : '') + ' cm</div>';
+          }
+        }
+        var dv = Bryst.volumeOf(item) - state.vol;
+        var dvTxt = (dv >= 0 ? '+' : '−') + Math.round(Math.abs(dv));
+        var picked = Bryst.picks.has(item);
         return '<div class="impl-card">' +
           Bryst.silhouetteSVG(item) +
           '<div class="impl-meta">' +
@@ -1360,10 +1778,12 @@ window.Bryst = (function(){
               (item.projection_cm ? '<span><b>Proj</b>' + item.projection_cm.toFixed(1) + ' cm</span>' : '') +
             '</div>' +
             '<div class="codes">' + Bryst.catalogLabel(item) + '</div>' +
+            expHtml +
           '</div>' +
           '<div class="actions">' +
             '<button class="copy-btn" data-idx="' + i + '">Kopiér journaltekst</button>' +
-            '<span class="match-score">Δ bredde ' + item._widthDelta.toFixed(1) + ' cm' + (item._heightDelta != null ? ' · Δ højde ' + item._heightDelta.toFixed(1) + ' cm' : '') + '</span>' +
+            '<button class="pick-btn' + (picked ? ' picked' : '') + '" data-idx="' + i + '">' + (picked ? '✓ På patientoversigt' : '+ Til patientoversigt') + '</button>' +
+            '<span class="match-score">Δ bredde ' + item._widthDelta.toFixed(1) + ' cm' + (item._heightDelta != null ? ' · Δ højde ' + item._heightDelta.toFixed(1) + ' cm' : '') + ' · Δ vol ' + dvTxt + ' cc</span>' +
           '</div>' +
         '</div>';
       }).join('') + '</div>';
@@ -1377,6 +1797,12 @@ window.Bryst = (function(){
             btn.classList.add('copied');
             setTimeout(function(){ btn.textContent = 'Kopiér journaltekst'; btn.classList.remove('copied'); }, 1800);
           });
+        });
+      });
+      container.querySelectorAll('.pick-btn').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          Bryst.picks.toggle(out.results[parseInt(btn.dataset.idx, 10)]);
+          render();
         });
       });
     }
@@ -1397,6 +1823,30 @@ window.Bryst = (function(){
     $('notesContainer').innerHTML = notes.map(function(n){ return '<div class="note">' + n + '</div>'; }).join('');
   }
 
+  // ---- Retur-bjælke, når Modul 1 er åbnet fra et patientmodul (#modul1?fra=modul2/3) ----
+  var returnTarget = null;
+  function updateReturnBar(){
+    if (location.hash.indexOf('#modul1') === 0){
+      var m = location.hash.match(/fra=(modul2|modul3)/);
+      returnTarget = m ? '#' + m[1] : null;
+    }
+    var bar = $('m1ReturnBar');
+    if (returnTarget){
+      bar.hidden = false;
+      $('m1ReturnName').textContent = returnTarget === '#modul2' ? 'Sygehusmodulet' : 'Privatmodulet';
+      $('m1PickCount').textContent = Bryst.picks.count();
+    } else {
+      bar.hidden = true;
+    }
+  }
+  window.addEventListener('hashchange', updateReturnBar);
+  $('m1ReturnLink').addEventListener('click', function(e){
+    e.preventDefault();
+    if (returnTarget) location.hash = returnTarget;
+  });
+  Bryst.picks.onChange(function(){ $('m1PickCount').textContent = Bryst.picks.count(); });
+  updateReturnBar();
+
   render();
 })();
 </script>
@@ -1416,7 +1866,7 @@ window.Bryst = (function(){
     return '<svg class="m3-silhouette" viewBox="0 0 90 76"><path d="' + SILHOUETTES[key] + '"/></svg>';
   }
 
-  var state = { changeAmount: 'moderate', ptosis: 0, bmi: 22, selected: {} };
+  var state = { changeAmount: 'moderate', ptosis: 0, bmi: 22, selected: {}, pickInclude: {} };
 
   function $(id){ return document.getElementById(id); }
 
@@ -1439,8 +1889,9 @@ window.Bryst = (function(){
 
     // Implantat — altid en gyldig mulighed for en rask patient (Modul 3 forudsætter rask patient)
     mods.push({
-      key: 'implant', name: 'Implantat', silhouette: 'implant', viable: true,
-      notes: ['Endeligt implantat afgøres i Modul 1 (lægemodul) ved konsultationen.'],
+      key: 'implant', name: 'Implantat', silhouette: 'implant', viable: true, implantRelated: true,
+      notes: ['Endeligt implantat afgøres i Modul 1 (lægemodul) ved konsultationen.',
+        'Afprøv volumen hjemme med »ris-testen«: ris i en nylonstrømpe i bh\'en — 1 dl ris svarer til ca. 100 cc.'],
       pros: ['Forudsigelig, kontrollerbar størrelse og form', 'Effekt varer ved uden gentagne seancer'],
       cons: ['Kapseldannelse og evt. reoperation over tid (litteratur angiver ca. 10–25%)', 'Kan opleves som fremmedlegeme', 'Alene ofte utilstrækkeligt ved udtalt nedhæng (grad II–III)']
     });
@@ -1485,7 +1936,7 @@ window.Bryst = (function(){
       }
     }
     mods.push({
-      key: 'combo', name: 'Kombination', silhouette: 'combo', viable: comboViable, reason: comboReason,
+      key: 'combo', name: 'Kombination', silhouette: 'combo', viable: comboViable, reason: comboReason, implantRelated: true,
       notes: comboNotes,
       pros: ['Adresserer både nedhæng og volumen — ofte i samme forløb', 'Undgår to separate operationsforløb'],
       cons: ['Højere samlet komplikations- og revisionsrisiko end hver procedure for sig', 'Kan kræve 2 seancer ved udtalt nedhæng']
@@ -1512,6 +1963,7 @@ window.Bryst = (function(){
         '<h3>' + m.name + '</h3>' +
         (m.viable ?
           (m.notes.map(function(n){ return '<div class="m3-note">' + n + '</div>'; }).join('') +
+           (m.implantRelated ? '<a class="m3-open-m1" href="#modul1?fra=modul3">Åbn implantatvalg (lægemodul) →</a>' : '') +
            '<button class="m3-card-select' + (picked ? ' picked' : '') + '" data-key="' + m.key + '">' + (picked ? 'Valgt ✓' : 'Vælg til sammenligning') + '</button>')
           : '<div class="m3-reason">Ikke oplagt her: ' + m.reason + '</div>') +
       '</div>';
@@ -1530,19 +1982,49 @@ window.Bryst = (function(){
     var mods = evaluateModalities(state).filter(function(m){ return m.viable && state.selected[m.key]; });
     if (mods.length === 0){
       $('m3Compare').innerHTML = '<div class="m3-hint" style="text-align:center;padding:30px;">Ingen muligheder valgt endnu — gå tilbage og vælg mindst én.</div>';
-      return;
+    } else {
+      $('m3Compare').innerHTML = mods.map(function(m){
+        return '<div class="m3-compare-col">' +
+          silhouette(m.silhouette) +
+          '<h3>' + m.name + '</h3>' +
+          '<div class="m3-compare-heading">Fordele</div>' +
+          '<ul class="m3-compare-list pros">' + m.pros.map(function(p){ return '<li>' + p + '</li>'; }).join('') + '</ul>' +
+          '<div class="m3-compare-heading">Ulemper</div>' +
+          '<ul class="m3-compare-list cons">' + m.cons.map(function(c){ return '<li>' + c + '</li>'; }).join('') + '</ul>' +
+        '</div>';
+      }).join('');
     }
-    $('m3Compare').innerHTML = mods.map(function(m){
-      return '<div class="m3-compare-col">' +
-        silhouette(m.silhouette) +
-        '<h3>' + m.name + '</h3>' +
-        '<div class="m3-compare-heading">Fordele</div>' +
-        '<ul class="m3-compare-list pros">' + m.pros.map(function(p){ return '<li>' + p + '</li>'; }).join('') + '</ul>' +
-        '<div class="m3-compare-heading">Ulemper</div>' +
-        '<ul class="m3-compare-list cons">' + m.cons.map(function(c){ return '<li>' + c + '</li>'; }).join('') + '</ul>' +
-      '</div>';
-    }).join('');
+    renderPicks();
   }
+
+  // Implantater markeret i Modul 1 ("Til patientoversigt") — kan krydses af til PDF'en
+  var Bryst = window.Bryst;
+  function renderPicks(){
+    var picks = Bryst.picks.list();
+    var box = $('m3PicksBox');
+    if (!picks.length){ box.innerHTML = ''; return; }
+    picks.forEach(function(p){
+      var id = Bryst.picks.idOf(p);
+      if (!(id in state.pickInclude)) state.pickInclude[id] = true;
+    });
+    box.innerHTML = '<div class="pick-box">' +
+      '<div class="pick-box-head">Implantater fundet i lægemodulet</div>' +
+      '<div class="pick-box-sub">Sæt flueben ved dem, der skal med på den printbare oversigt.</div>' +
+      picks.map(function(p){
+        var id = Bryst.picks.idOf(p);
+        return '<label class="pick-line"><input type="checkbox" data-id="' + id + '"' + (state.pickInclude[id] ? ' checked' : '') + '><span>' +
+          Bryst.profileLabel(p) + (Bryst.textureLabel(p) ? ', ' + Bryst.textureLabel(p) : '') + ' — ' + Bryst.volumeOf(p) + ' cc · ' + Bryst.catalogLabel(p) + '</span></label>';
+      }).join('') + '</div>';
+    box.querySelectorAll('input').forEach(function(cb){
+      cb.addEventListener('change', function(){ state.pickInclude[cb.dataset.id] = cb.checked; });
+    });
+  }
+  function includedPicks(){
+    return Bryst.picks.list().filter(function(p){ return state.pickInclude[Bryst.picks.idOf(p)] !== false; });
+  }
+  window.addEventListener('hashchange', function(){
+    if (location.hash.indexOf('#modul3') === 0 && $('m3-view-compare').classList.contains('active')) renderPicks();
+  });
 
   $('m3ToOverview').addEventListener('click', function(){ renderOverview(); showView('overview'); });
   $('m3BackToIntake').addEventListener('click', function(){ showView('intake'); });
@@ -1550,10 +2032,14 @@ window.Bryst = (function(){
   $('m3BackToOverview').addEventListener('click', function(){ renderOverview(); showView('overview'); });
 
   $('m3ExportPdf').addEventListener('click', function(){
-    exportPdf(state, evaluateModalities(state).filter(function(m){ return m.viable && state.selected[m.key]; }));
+    exportPdf(state, evaluateModalities(state));
   });
 
-  function exportPdf(s, mods){
+  function exportPdf(s, allMods){
+    var mods = allMods.filter(function(m){ return m.viable && s.selected[m.key]; });
+    var notChosen = allMods.filter(function(m){ return m.viable && !s.selected[m.key]; });
+    var notViable = allMods.filter(function(m){ return !m.viable; });
+    var picks = includedPicks();
     var win = window.open('', '_blank');
     if (!win){ window.print(); return; }
     var changeLabel = {small:'Lidt større (½–1 cup)', moderate:'Moderat større (1–2 cup)', large:'Meget større (2+ cup)'}[s.changeAmount];
@@ -1591,6 +2077,23 @@ window.Bryst = (function(){
           (m.notes.length ? m.notes.map(function(n){ return '<div class="note">' + n + '</div>'; }).join('') : '') +
         '</div>';
       }).join('') +
+      (picks.length ?
+        '<div class="col"><h2>Implantater drøftet ved konsultationen</h2><ul>' +
+        picks.map(function(p){
+          var Bryst = window.Bryst;
+          return '<li>' + Bryst.profileLabel(p) + (Bryst.textureLabel(p) ? ', ' + Bryst.textureLabel(p) : '') + ' — ' + Bryst.volumeOf(p) + ' cc' +
+            (Bryst.widthOf(p) ? ', Ø/B ' + Bryst.widthOf(p).toFixed(1) + ' cm' : '') +
+            (p.projection_cm ? ', proj. ' + p.projection_cm.toFixed(1) + ' cm' : '') +
+            ' · katalog# ' + Bryst.catalogLabel(p) + '</li>';
+        }).join('') + '</ul>' +
+        '<div class="note">Endeligt implantat afgøres først ved operationen (med prøveimplantat/sizer).</div></div>'
+        : '') +
+      ((notChosen.length || notViable.length) ?
+        '<div class="col"><h2>Muligheder, der også blev gennemgået</h2>' +
+        (notChosen.length ? '<div class="heading">Gennemgået, men fravalgt</div><ul>' + notChosen.map(function(m){ return '<li>' + m.name + '</li>'; }).join('') + '</ul>' : '') +
+        (notViable.length ? '<div class="heading">Vurderet mindre egnet her</div><ul>' + notViable.map(function(m){ return '<li>' + m.name + ' — ' + m.reason + '</li>'; }).join('') + '</ul>' : '') +
+        '<div class="note">Medtaget for at dokumentere, at valget er truffet på et fuldt oplyst grundlag.</div></div>'
+        : '') +
       '<div class="footer">Ingen af mulighederne ovenfor er rangeret eller anbefalet af værktøjet — lægen har superviseret og suppleret mundtligt. ' +
       'Denne oversigt supplerer men erstatter ikke journalført informeret samtykke. Datagrundlag: Mentor Product Guide 2023; plastikkirurgisk litteratur om augmentation, fedtoverførsel, mastopexi og kombinationsprocedurer.</div>' +
       '</body></html>';
@@ -1624,7 +2127,8 @@ window.Bryst = (function(){
     bmi: 24, age: 50, vol: 350,
     comorbid: false, immune: false, connective: false, bilateral: false,
     expert: false,
-    selected: {}
+    selected: {},
+    pickInclude: {}
   };
 
   function $(id){ return document.getElementById(id); }
@@ -1672,7 +2176,7 @@ window.Bryst = (function(){
     if (s.vol > 550) implantReasons.push('Ønsket volumen over ca. 500–600 ml: 1-stadie PBR med implantat frarådes (DBCG anbef. 14).');
     if (!s.immune && s.radiation !== 'prior' && s.vol <= 550 && relCount >= 2) implantReasons.push('To eller flere relative risikofaktorer til stede (BMI>30/rygning/alder>65/komorbiditet/bilateralt): 1-stadie frarådes, 2-stadie eller SBR kan være sikrere (DBCG anbef. 14).');
     mods.push({
-      key:'implant', name:'Implantat (1-stadie)', silhouette:'implant', viable: implantReasons.length === 0,
+      key:'implant', name:'Implantat (1-stadie)', silhouette:'implant', viable: implantReasons.length === 0, implantRelated: true,
       reason: implantReasons[0],
       notes: (s.radiation === 'planned') ? ['Ved planlagt strålebehandling anbefaler DBCG generelt at udskyde rekonstruktion til sekundær rekonstruktion (SBR), medmindre det sker som led i et videnskabeligt studie (DBCG anbef. 16).'] : [],
       pros: ['Ét samlet operationsforløb', 'Intet donorsted / ingen ekstra ar andetsteds på kroppen'],
@@ -1684,7 +2188,7 @@ window.Bryst = (function(){
     if (s.immune) expanderReasons.push('Immunsuppression: ikke egnet til implantatbaseret rekonstruktion, herunder ekspander (DBCG grundlag).');
     if (s.radiation === 'prior') expanderReasons.push('Tidligere stråleterapi: implantatbaseret rekonstruktion (herunder ekspander) frarådes (DBCG anbef. 15).');
     mods.push({
-      key:'expander', name:'Ekspander (2-stadie)', silhouette:'expander', viable: expanderReasons.length === 0,
+      key:'expander', name:'Ekspander (2-stadie)', silhouette:'expander', viable: expanderReasons.length === 0, implantRelated: true,
       reason: expanderReasons[0],
       notes: (s.radiation === 'planned') ? ['Ved stråleterapi er der i litteraturen set flere tab af rekonstruktion, når ekspanderen bestråles, end når det blivende implantat bestråles — hvis implantatbaseret PBR alligevel forfølges, bør timing drøftes konkret.'] : [],
       pros: ['Kan tilpasses større ønsket volumen end 1-stadie', 'Anvendes ofte når huden er dårligt perfunderet efter mastektomi'],
@@ -1716,7 +2220,7 @@ window.Bryst = (function(){
       if (s.immune) comboReasons.push('Immunsuppression: kontraindicerer både implantat- og lap-baseret rekonstruktion (DBCG grundlag).');
       if (s.scar === 'abdominoplasty') comboReasons.push('Tidligere abdominoplastik med navletransposition udelukker DIEP som lap-komponent — andre donorsteder (ryg m.v.) kan stadig kombineres med implantat — se ekspertvisning.');
       mods.push({
-        key:'combo', name:'Kombination (lap + implantat)', silhouette:'combo', viable: comboReasons.length === 0,
+        key:'combo', name:'Kombination (lap + implantat)', silhouette:'combo', viable: comboReasons.length === 0, implantRelated: true,
         reason: comboReasons[0],
         notes: s.bmi < 19 ? ['Ved begrænset donorvolumen (fx lav BMI) kan et implantat supplere en lap, der alene giver for lidt volumen — typisk set ved latissimus dorsi-lap.'] : [],
         pros: ['Kan kompensere når egen donorvæv alene giver for lidt volumen', 'Mulighed for at kombinere fordele fra begge tilgange'],
@@ -1745,7 +2249,7 @@ window.Bryst = (function(){
       var ldReasons = [];
       if (s.immune) ldReasons.push('Immunsuppression: også større lap-rekonstruktion er kontraindiceret (DBCG grundlag).');
       mods.push({
-        key:'ld', name:'Latissimus dorsi-lap (ofte + implantat)', silhouette:'combo', viable: ldReasons.length === 0,
+        key:'ld', name:'Latissimus dorsi-lap (ofte + implantat)', silhouette:'combo', viable: ldReasons.length === 0, implantRelated: true,
         reason: ldReasons[0],
         notes: ['Upåvirket af ar på bugvæggen — relevant alternativ når bugvæv ikke er en mulighed (fx tidligere abdominoplastik). Giver ofte mindre volumen end bugvæv alene, hvorfor implantat hyppigt tilføjes.'],
         pros: ['Robust lap med pålidelig blodforsyning', 'God mulighed når abdominalt donorvæv ikke kan bruges'],
@@ -1785,6 +2289,7 @@ window.Bryst = (function(){
           '<h3>' + m.name + '</h3>' +
           (m.viable ?
             (m.notes.map(function(n){ return '<div class="m2-note">' + n + '</div>'; }).join('') +
+             (m.implantRelated ? '<div><a class="m2-open-m1" href="#modul1?fra=modul2">Åbn implantatvalg (lægemodul) →</a></div>' : '') +
              '<button class="m2-option-select' + (picked ? ' picked' : '') + '" data-key="' + m.key + '">' + (picked ? 'Valgt ✓' : 'Vælg til sammenligning') + '</button>')
             : '<div class="m2-reason">Ikke oplagt her: ' + m.reason + '</div>') +
         '</div>' +
@@ -1803,19 +2308,49 @@ window.Bryst = (function(){
     var mods = evaluateReconstruction(state).filter(function(m){ return m.viable && state.selected[m.key]; });
     if (mods.length === 0){
       $('m2Compare').innerHTML = '<div class="m2-hint" style="padding:20px 0;">Ingen muligheder valgt endnu — gå tilbage og vælg mindst én.</div>';
-      return;
+    } else {
+      $('m2Compare').innerHTML = mods.map(function(m){
+        return '<div class="m2-compare-col">' +
+          silhouette(m.silhouette) +
+          '<h3>' + m.name + '</h3>' +
+          '<div class="m2-compare-heading">Fordele</div>' +
+          '<ul class="m2-compare-list pros">' + m.pros.map(function(p){ return '<li>' + p + '</li>'; }).join('') + '</ul>' +
+          '<div class="m2-compare-heading">Ulemper</div>' +
+          '<ul class="m2-compare-list cons">' + m.cons.map(function(c){ return '<li>' + c + '</li>'; }).join('') + '</ul>' +
+        '</div>';
+      }).join('');
     }
-    $('m2Compare').innerHTML = mods.map(function(m){
-      return '<div class="m2-compare-col">' +
-        silhouette(m.silhouette) +
-        '<h3>' + m.name + '</h3>' +
-        '<div class="m2-compare-heading">Fordele</div>' +
-        '<ul class="m2-compare-list pros">' + m.pros.map(function(p){ return '<li>' + p + '</li>'; }).join('') + '</ul>' +
-        '<div class="m2-compare-heading">Ulemper</div>' +
-        '<ul class="m2-compare-list cons">' + m.cons.map(function(c){ return '<li>' + c + '</li>'; }).join('') + '</ul>' +
-      '</div>';
-    }).join('');
+    renderPicks();
   }
+
+  // Implantater markeret i Modul 1 ("Til patientoversigt") — kan krydses af til PDF'en
+  var Bryst = window.Bryst;
+  function renderPicks(){
+    var picks = Bryst.picks.list();
+    var box = $('m2PicksBox');
+    if (!picks.length){ box.innerHTML = ''; return; }
+    picks.forEach(function(p){
+      var id = Bryst.picks.idOf(p);
+      if (!(id in state.pickInclude)) state.pickInclude[id] = true;
+    });
+    box.innerHTML = '<div class="pick-box">' +
+      '<div class="pick-box-head">Implantater/ekspandere fundet i lægemodulet</div>' +
+      '<div class="pick-box-sub">Sæt flueben ved dem, der skal med på den printbare oversigt.</div>' +
+      picks.map(function(p){
+        var id = Bryst.picks.idOf(p);
+        return '<label class="pick-line"><input type="checkbox" data-id="' + id + '"' + (state.pickInclude[id] ? ' checked' : '') + '><span>' +
+          Bryst.profileLabel(p) + (Bryst.textureLabel(p) ? ', ' + Bryst.textureLabel(p) : '') + ' — ' + Bryst.volumeOf(p) + ' cc · ' + Bryst.catalogLabel(p) + '</span></label>';
+      }).join('') + '</div>';
+    box.querySelectorAll('input').forEach(function(cb){
+      cb.addEventListener('change', function(){ state.pickInclude[cb.dataset.id] = cb.checked; });
+    });
+  }
+  function includedPicks(){
+    return Bryst.picks.list().filter(function(p){ return state.pickInclude[Bryst.picks.idOf(p)] !== false; });
+  }
+  window.addEventListener('hashchange', function(){
+    if (location.hash.indexOf('#modul2') === 0 && $('m2-view-compare').classList.contains('active')) renderPicks();
+  });
 
   $('m2ToOverview').addEventListener('click', function(){ renderOverview(); showView('overview'); });
   $('m2BackToIntake').addEventListener('click', function(){ showView('intake'); });
@@ -1823,10 +2358,14 @@ window.Bryst = (function(){
   $('m2BackToOverview').addEventListener('click', function(){ renderOverview(); showView('overview'); });
 
   $('m2ExportPdf').addEventListener('click', function(){
-    exportPdf(state, evaluateReconstruction(state).filter(function(m){ return m.viable && state.selected[m.key]; }));
+    exportPdf(state, evaluateReconstruction(state));
   });
 
-  function exportPdf(s, mods){
+  function exportPdf(s, allMods){
+    var mods = allMods.filter(function(m){ return m.viable && s.selected[m.key]; });
+    var notChosen = allMods.filter(function(m){ return m.viable && !s.selected[m.key]; });
+    var notViable = allMods.filter(function(m){ return !m.viable; });
+    var picks = includedPicks();
     var win = window.open('', '_blank');
     if (!win){ window.print(); return; }
     var radiationLabel = {none:'Ingen', prior:'Tidligere givet', planned:'Planlagt efter operation'}[s.radiation];
@@ -1863,6 +2402,22 @@ window.Bryst = (function(){
           (m.notes.length ? m.notes.map(function(n){ return '<div class="note">' + n + '</div>'; }).join('') : '') +
         '</div>';
       }).join('') +
+      (picks.length ?
+        '<div class="col"><h2>Implantater/ekspandere drøftet ved konsultationen</h2><ul>' +
+        picks.map(function(p){
+          return '<li>' + Bryst.profileLabel(p) + (Bryst.textureLabel(p) ? ', ' + Bryst.textureLabel(p) : '') + ' — ' + Bryst.volumeOf(p) + ' cc' +
+            (Bryst.widthOf(p) ? ', Ø/B ' + Bryst.widthOf(p).toFixed(1) + ' cm' : '') +
+            (p.projection_cm ? ', proj. ' + p.projection_cm.toFixed(1) + ' cm' : '') +
+            ' · katalog# ' + Bryst.catalogLabel(p) + '</li>';
+        }).join('') + '</ul>' +
+        '<div class="note">Endeligt implantat afgøres først ved operationen (med prøveimplantat/sizer).</div></div>'
+        : '') +
+      ((notChosen.length || notViable.length) ?
+        '<div class="col"><h2>Muligheder, der også blev gennemgået</h2>' +
+        (notChosen.length ? '<div class="heading">Gennemgået, men fravalgt</div><ul>' + notChosen.map(function(m){ return '<li>' + m.name + '</li>'; }).join('') + '</ul>' : '') +
+        (notViable.length ? '<div class="heading">Vurderet mindre egnet her</div><ul>' + notViable.map(function(m){ return '<li>' + m.name + ' — ' + m.reason + '</li>'; }).join('') + '</ul>' : '') +
+        '<div class="note">Medtaget for at dokumentere, at valget er truffet på et fuldt oplyst grundlag.</div></div>'
+        : '') +
       '<div class="footer">Ingen af mulighederne ovenfor er rangeret eller anbefalet af værktøjet — der findes ingen evidens for, at én rekonstruktionstype er mere anbefalelsesværdig end en anden (DBCG). Lægen har superviseret og suppleret mundtligt. ' +
       'Denne oversigt supplerer men erstatter ikke journalført informeret samtykke. Datagrundlag: DBCG Kirurgisk behandling af brystkræft v3.1 (godk. 27-11-2024); plastikkirurgisk litteratur om lap-egnethed og komplikationsrisiko.</div>' +
       '</body></html>';
@@ -1910,6 +2465,11 @@ window.Bryst = (function(){
     {key:'height', label:'Højde (cm)', numeric:true, get: function(i){ return i.height_cm; }},
     {key:'projection', label:'Proj (cm)', numeric:true, get: function(i){ return i.projection_cm != null ? i.projection_cm : i.nominal_projection_cm; }},
     {key:'lpa', label:'LPA (cm)', numeric:true, get: function(i){ return i.lower_pole_arc_cm; }},
+    // Fylde-kolonner: kun Becker/Spectrum har værdier — columnsFor() skjuler dem automatisk andre steder
+    {key:'gel', label:'Gel (cc)', numeric:true, get: function(i){ return i.gel_volume_cc; }},
+    {key:'saline_range', label:'Saline-fyld (cc)', numeric:false, get: function(i){ return i.total_saline_cc_range; }},
+    {key:'total_range', label:'Total gel+saline (cc)', numeric:false, get: function(i){ return i.total_gel_saline_cc_range; }},
+    {key:'fill_range', label:'Fyldespænd (cc)', numeric:false, get: function(i){ return i.min_volume_cc != null && i.max_final_volume_cc != null ? (Math.round(i.min_volume_cc) + '–' + Math.round(i.max_final_volume_cc)) : null; }},
     {key:'profile', label:'Profil', numeric:false, get: function(i){ return Bryst.profileLabel(i); }},
     {key:'catalog', label:'Katalog#', numeric:false, get: function(i){ return Bryst.catalogLabel(i); }}
   ];
@@ -1942,6 +2502,15 @@ window.Bryst = (function(){
 
   function itemId(item){ return item.catalog || item.catalog_3_suture_tabs; }
 
+  function rowFor(item, cols){
+    var id = itemId(item);
+    return '<tr>' + cols.map(function(c){
+      return '<td class="' + (c.key === 'profile' || c.key === 'catalog' ? 'k-nowrap-name' : '') + '">' + fmt(c.get(item)) + '</td>';
+    }).join('') +
+    '<td class="k-actcell"><button class="k-add-btn' + (tray[id] ? ' added' : '') + '" data-id="' + id + '">' + (tray[id] ? 'Tilføjet ✓' : '+ Sammenlign') + '</button> ' +
+    '<button class="k-sim-btn" data-id="' + id + '" title="Sammenlign med nærmeste tilsvarende i andre serier">≈ lignende</button></td></tr>';
+  }
+
   function renderFamilies(){
     var html = FAMILY_ORDER.filter(function(k){ return families[k]; }).map(function(k){
       var fam = families[k];
@@ -1956,12 +2525,7 @@ window.Bryst = (function(){
         if (av > bv) return 1 * sortKey.dir;
         return 0;
       });
-      var rows = sorted.map(function(item){
-        var id = itemId(item);
-        return '<tr>' + cols.map(function(c){
-          return '<td class="' + (c.key === 'profile' || c.key === 'catalog' ? 'k-nowrap-name' : '') + '">' + fmt(c.get(item)) + '</td>';
-        }).join('') + '<td><button class="k-add-btn' + (tray[id] ? ' added' : '') + '" data-id="' + id + '">' + (tray[id] ? 'Tilføjet ✓' : '+ Sammenlign') + '</button></td></tr>';
-      }).join('');
+      var rows = sorted.map(function(item){ return rowFor(item, cols); }).join('');
       return '<div class="k-family' + (openState[k] ? ' open' : '') + '" id="fam-' + k + '" style="--fam-color:' + fam.info.color + '">' +
         '<div class="k-family-head" data-key="' + k + '">' +
           '<h3>' + fam.info.name + '</h3>' +
@@ -2001,16 +2565,109 @@ window.Bryst = (function(){
         toggleTray(btn.dataset.id);
       });
     });
+    wireSimButtons($('kFamiliesView'));
+  }
+
+  function wireSimButtons(root){
+    root.querySelectorAll('.k-sim-btn').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        similarCompare(btn.dataset.id);
+      });
+    });
+  }
+
+  function projOf(i){ return i.projection_cm != null ? i.projection_cm : i.nominal_projection_cm; }
+
+  // "≈ lignende": find nærmeste tilsvarende variant i hver af de andre serier
+  // (permanente sammenlignes med permanente, ekspandere med ekspandere) og åbn sammenligningen.
+  function similarCompare(id){
+    var item = findItemById(id);
+    if (!item) return;
+    var isPerm = Bryst.PERMANENT_CATEGORIES.indexOf(item.category) > -1;
+    var myFam = familyOf(item);
+    var v0 = Bryst.volumeOf(item), w0 = Bryst.widthOf(item), p0 = projOf(item);
+    var byFam = {};
+    CATALOG.forEach(function(c){
+      if ((Bryst.PERMANENT_CATEGORIES.indexOf(c.category) > -1) !== isPerm) return;
+      var f = familyOf(c);
+      if (!f || !myFam || f.key === myFam.key) return;
+      var v1 = Bryst.volumeOf(c), w1 = Bryst.widthOf(c);
+      if (v1 == null || w1 == null || v0 == null || w0 == null) return;
+      var score = Math.abs(v1 - v0) / 50 + Math.abs(w1 - w0) * 3;
+      var p1 = projOf(c);
+      if (p0 != null && p1 != null) score += Math.abs(p1 - p0) * 2;
+      if (!byFam[f.key] || score < byFam[f.key].score) byFam[f.key] = { item: c, score: score };
+    });
+    var best = Object.keys(byFam).map(function(k){ return byFam[k]; })
+      .sort(function(a, b){ return a.score - b.score; }).slice(0, 3);
+    tray = {};
+    tray[id] = true;
+    best.forEach(function(b){ tray[itemId(b.item)] = true; });
+    renderTray();
+    renderFamilies();
+    updateViews();
+    openCompare();
+  }
+
+  // Tre visninger: fritekst-søgning > volumen-opslag > familie-browsing
+  function updateViews(){
+    var q = $('kSearch').value.trim();
+    var vol = parseFloat($('kVolInput').value);
+    if (q){
+      $('kVolumeView').style.display = 'none';
+      $('kFamiliesView').style.display = 'none';
+      renderSearch(q);
+    } else if (!isNaN(vol) && vol > 0){
+      $('kResultsView').innerHTML = '';
+      $('kSearchCount').textContent = '';
+      $('kFamiliesView').style.display = 'none';
+      $('kVolumeView').style.display = 'block';
+      renderVolume(vol, parseFloat($('kVolTol').value) || 25);
+    } else {
+      $('kResultsView').innerHTML = '';
+      $('kSearchCount').textContent = '';
+      $('kVolumeView').style.display = 'none';
+      $('kVolumeView').innerHTML = '';
+      $('kFamiliesView').style.display = 'block';
+    }
+  }
+
+  // Volumen-opslag: alle varianter nær ét volumen, grupperet pr. serie — bredde/projektion side om side
+  function renderVolume(vol, tol){
+    var view = $('kVolumeView');
+    var total = 0;
+    var sections = FAMILY_ORDER.filter(function(k){ return families[k]; }).map(function(k){
+      var fam = families[k];
+      var matches = fam.items.filter(function(i){
+        var v = Bryst.volumeOf(i);
+        return v != null && Math.abs(v - vol) <= tol;
+      }).sort(function(a, b){ return (Bryst.widthOf(a) || 0) - (Bryst.widthOf(b) || 0); });
+      if (!matches.length) return '';
+      total += matches.length;
+      var cols = columnsFor(matches);
+      var rows = matches.map(function(item){ return rowFor(item, cols); }).join('');
+      return '<div class="k-family open" style="--fam-color:' + fam.info.color + '">' +
+        '<div class="k-family-head" style="cursor:default;">' +
+          '<h3>' + fam.info.name + '</h3>' +
+          '<span class="k-count">' + matches.length + ' inden for ±' + tol + ' cc</span>' +
+        '</div>' +
+        '<div class="k-family-table-wrap"><table class="k-table">' +
+          '<thead><tr>' + cols.map(function(c){ return '<th>' + c.label + '</th>'; }).join('') + '<th></th></tr></thead>' +
+          '<tbody>' + rows + '</tbody>' +
+        '</table></div>' +
+      '</div>';
+    }).join('');
+    view.innerHTML = (total
+      ? '<div class="k-vol-head">' + total + ' varianter ved ' + Math.round(vol) + ' cc ± ' + Math.round(tol) + ' cc, sorteret efter bredde inden for hver serie.</div>' + sections
+      : '<div class="k-empty">Ingen varianter inden for ±' + Math.round(tol) + ' cc af ' + Math.round(vol) + ' cc. Prøv en større tolerance.</div>');
+    view.querySelectorAll('.k-add-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){ toggleTray(btn.dataset.id); });
+    });
+    wireSimButtons(view);
   }
 
   function renderSearch(query){
-    if (!query){
-      $('kResultsView').innerHTML = '';
-      $('kSearchCount').textContent = '';
-      $('kFamiliesView').style.display = 'block';
-      return;
-    }
-    $('kFamiliesView').style.display = 'none';
     var q = query.toLowerCase();
     var matches = CATALOG.filter(function(item){
       var hay = [item.catalog, item.sizer, item.catalog_3_suture_tabs, item.catalog_no_suture_tabs, item.line, item.profile, item.cohesive]
@@ -2032,11 +2689,13 @@ window.Bryst = (function(){
           '<div class="k-meta">' + Bryst.catalogLabel(item) + ' · ' + fmt(item.volume_cc != null ? item.volume_cc : item.nominal_final_volume_cc) + ' cc</div>' +
         '</div>' +
         '<button class="k-add-btn' + (tray[id] ? ' added' : '') + '" data-id="' + id + '">' + (tray[id] ? 'Tilføjet ✓' : '+ Sammenlign') + '</button>' +
+        '<button class="k-sim-btn" data-id="' + id + '" title="Sammenlign med nærmeste tilsvarende i andre serier">≈</button>' +
       '</div>';
     }).join('') + '</div>';
     $('kResultsView').querySelectorAll('.k-add-btn').forEach(function(btn){
       btn.addEventListener('click', function(){ toggleTray(btn.dataset.id); });
     });
+    wireSimButtons($('kResultsView'));
   }
 
   function findItemById(id){
@@ -2050,7 +2709,7 @@ window.Bryst = (function(){
     }
     renderTray();
     renderFamilies();
-    if ($('kSearch').value) renderSearch($('kSearch').value);
+    updateViews();
   }
 
   function renderTray(){
@@ -2068,10 +2727,10 @@ window.Bryst = (function(){
   $('kTrayClear').addEventListener('click', function(){
     tray = {};
     renderTray(); renderFamilies();
-    if ($('kSearch').value) renderSearch($('kSearch').value);
+    updateViews();
   });
 
-  $('kTrayCompare').addEventListener('click', function(){
+  function openCompare(){
     var items = Object.keys(tray).map(findItemById).filter(Boolean);
     if (items.length === 0) return;
     var cols = columnsFor(items);
@@ -2082,14 +2741,20 @@ window.Bryst = (function(){
       }).join('') + '</tbody>';
     $('kCompareTable').innerHTML = html;
     $('kCompareOverlay').hidden = false;
-  });
+  }
+  $('kTrayCompare').addEventListener('click', openCompare);
   $('kCompareClose').addEventListener('click', function(){ $('kCompareOverlay').hidden = true; });
 
   var searchTimer;
-  $('kSearch').addEventListener('input', function(e){
+  $('kSearch').addEventListener('input', function(){
     clearTimeout(searchTimer);
-    var val = e.target.value.trim();
-    searchTimer = setTimeout(function(){ renderSearch(val); }, 80);
+    searchTimer = setTimeout(updateViews, 80);
+  });
+  ['kVolInput', 'kVolTol'].forEach(function(id){
+    $(id).addEventListener('input', function(){
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(updateViews, 120);
+    });
   });
 
   renderFamilies();
