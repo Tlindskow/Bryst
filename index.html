@@ -358,6 +358,22 @@
   }
   .toggle-row.inert{ opacity:.45; pointer-events:none; }
 
+  /* "Ny patient"-knap i modulernes headere (styles pr. skin) */
+  .head-right{ display:flex; align-items:center; gap:16px; }
+  .np-btn{
+    font-family:var(--sans); font-size:12px; font-weight:600; padding:6px 13px;
+    background:transparent; cursor:pointer; white-space:nowrap;
+  }
+  header.instrument .np-btn{ border:1px solid rgba(244,246,244,.35); color:var(--paper); }
+  header.instrument .np-btn:hover{ border-color:var(--paper); }
+  header.instrument .np-btn:focus-visible{ outline:2px solid var(--paper); outline-offset:2px; }
+  #screen-modul2 .np-btn{ border:1px solid var(--line-warm); color:var(--ink2-soft); border-radius:5px; }
+  #screen-modul2 .np-btn:hover{ color:var(--ink2); border-color:var(--ink2-faint); }
+  #screen-modul2 .np-btn:focus-visible{ outline:2px solid var(--sage-deep); outline-offset:2px; }
+  #screen-modul3 .np-btn{ border:1px solid var(--taupe-line); color:var(--plum-soft); }
+  #screen-modul3 .np-btn:hover{ color:var(--plum-ink); border-color:var(--plum-faint); }
+  #screen-modul3 .np-btn:focus-visible{ outline:2px solid var(--dusty-rose-deep); outline-offset:2px; }
+
   .return-bar[hidden]{ display:none; }
   .return-bar{
     display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap;
@@ -981,9 +997,12 @@
     <div class="eyebrow">Implantatvalg</div>
     <h1>Bryst<span class="module-tag">Lægemodul · Modul 1</span></h1>
   </div>
-  <div class="stamp">
-    Datagrundlag: <b>Mentor Product Guide 2023</b><br>
-    <span id="entryCount">—</span> katalogvarianter indlæst
+  <div class="head-right">
+    <div class="stamp">
+      Datagrundlag: <b>Mentor Product Guide 2023</b><br>
+      <span id="entryCount">—</span> katalogvarianter indlæst
+    </div>
+    <button class="np-btn" id="m1NyPatient" title="Nulstil alle indtastninger og valg i alle moduler">Ny patient</button>
   </div>
 </header>
 
@@ -1079,7 +1098,10 @@
 <div id="screen-modul2" class="screen">
   <div class="m2-header">
     <div class="m2-brand">Bryst <span>· Sygehusmodul</span></div>
-    <div class="m2-step" id="m2StepLabel">Trin <b>1</b> af 3 · Mål</div>
+    <div class="head-right">
+      <div class="m2-step" id="m2StepLabel">Trin <b>1</b> af 3 · Mål</div>
+      <button class="np-btn" id="m2NyPatient" title="Nulstil alle indtastninger og valg i alle moduler">Ny patient</button>
+    </div>
   </div>
 
   <div class="m2-body">
@@ -1144,7 +1166,7 @@
       <div class="m2-intro">
         <h1>Fire veje til rekonstruktion</h1>
         <p>Der findes ingen evidens for, at én rekonstruktionstype er mere anbefalelsesværdig end en anden (DBCG). Alle muligheder vises — også dem der passer mindre godt her, med begrundelse.</p>
-        <div class="m2-checkline" style="margin-top:18px;"><input type="checkbox" id="m2Expert"> Ekspertvisning — vis lap-typer enkeltvis (DIEP / latissimus dorsi / PAP-TUG)</div>
+        <div class="m2-checkline" style="margin-top:18px;"><input type="checkbox" id="m2Expert" checked> Ekspertvisning — vis lap-typer enkeltvis (DIEP / latissimus dorsi / PAP-TUG)</div>
       </div>
       <div class="m2-option-list" id="m2Options"></div>
       <div class="m2-actions">
@@ -1177,7 +1199,10 @@
 <div id="screen-modul3" class="screen">
   <div class="m3-header">
     <div class="m3-brand">Bryst <span>· Privatmodul</span></div>
-    <div class="m3-step" id="m3StepLabel">Trin <b>1</b> af 3 · Mål</div>
+    <div class="head-right">
+      <div class="m3-step" id="m3StepLabel">Trin <b>1</b> af 3 · Mål</div>
+      <button class="np-btn" id="m3NyPatient" title="Nulstil alle indtastninger og valg i alle moduler">Ny patient</button>
+    </div>
   </div>
 
   <div class="m3-body">
@@ -1521,9 +1546,30 @@ window.Bryst = (function(){
       },
       list: function(){ return items.slice(); },
       count: function(){ return items.length; },
+      clear: function(){
+        if (items.length){ items.length = 0; emit(); }
+      },
       onChange: function(fn){ listeners.push(fn); }
     };
   })();
+
+  // ---- "Ny patient": central nulstilling på tværs af alle moduler.
+  // Hvert modul registrerer sin egen reset-funktion; knappen sidder i modulernes headere.
+  var resetFns = [];
+  function onReset(fn){ resetFns.push(fn); }
+  function resetAll(){
+    picks.clear();
+    resetFns.forEach(function(fn){ try { fn(); } catch (e) {} });
+  }
+  function wireNyPatient(btnId){
+    var btn = document.getElementById(btnId);
+    if (!btn) return;
+    btn.addEventListener('click', function(){
+      if (window.confirm('Ny patient — nulstil alle indtastninger og valg i alle moduler?')){
+        resetAll();
+      }
+    });
+  }
 
   return {
     CATALOG: CATALOG,
@@ -1535,6 +1581,9 @@ window.Bryst = (function(){
     filterImplants: filterImplants,
     suggestExpander: suggestExpander,
     picks: picks,
+    onReset: onReset,
+    resetAll: resetAll,
+    wireNyPatient: wireNyPatient,
     profileLabel: profileLabel,
     textureLabel: textureLabel,
     catalogLabel: catalogLabel,
@@ -1847,6 +1896,32 @@ window.Bryst = (function(){
   Bryst.picks.onChange(function(){ $('m1PickCount').textContent = Bryst.picks.count(); });
   updateReturnBar();
 
+  // ---- "Ny patient": nulstil dette moduls tilstand og UI ----
+  function setToggle(id, val){
+    $(id).querySelectorAll('button').forEach(function(b){ b.classList.toggle('active', b.dataset.val === val); });
+  }
+  function setSlider(id, valId, v, decimals){
+    $(id).value = v;
+    $(valId).textContent = decimals ? v.toFixed(decimals) : v;
+  }
+  Bryst.wireNyPatient('m1NyPatient');
+  Bryst.onReset(function(){
+    state.context = 'augmentation'; state.expanderSearch = false;
+    state.width = 12.5; state.height = 11.5; state.spp = 24; state.ipp = 10; state.vol = 320;
+    state.texture = 'any'; state.shape = 'any';
+    setToggle('ctxToggle', 'augmentation');
+    setToggle('textureToggle', 'any');
+    setToggle('shapeToggle', 'any');
+    $('expanderField').style.display = 'none';
+    $('expanderCheck').checked = false;
+    setSlider('width', 'widthVal', 12.5, 1);
+    setSlider('heightIn', 'heightVal', 11.5, 1);
+    setSlider('spp', 'sppVal', 24, 0);
+    setSlider('ipp', 'ippVal', 10, 0);
+    setSlider('vol', 'volVal', 320, 0);
+    render();
+  });
+
   render();
 })();
 </script>
@@ -2103,6 +2178,20 @@ window.Bryst = (function(){
     setTimeout(function(){ win.print(); }, 250);
   }
 
+  // ---- "Ny patient": nulstil dette moduls tilstand og UI ----
+  function setRow(id, val){
+    $(id).querySelectorAll('.m3-choice').forEach(function(el){ el.classList.toggle('active', el.dataset.val === val); });
+  }
+  Bryst.wireNyPatient('m3NyPatient');
+  Bryst.onReset(function(){
+    state.changeAmount = 'moderate'; state.ptosis = 0; state.bmi = 22;
+    state.selected = {}; state.pickInclude = {};
+    setRow('m3ChangeAmount', 'moderate');
+    setRow('m3Ptosis', '0');
+    $('m3Bmi').value = 22;
+    showView('intake');
+  });
+
   showView('intake');
 })();
 </script>
@@ -2126,7 +2215,7 @@ window.Bryst = (function(){
     radiation: 'none', scar: 'none', smoking: 'no',
     bmi: 24, age: 50, vol: 350,
     comorbid: false, immune: false, connective: false, bilateral: false,
-    expert: false,
+    expert: true,
     selected: {},
     pickInclude: {}
   };
@@ -2426,6 +2515,27 @@ window.Bryst = (function(){
     win.focus();
     setTimeout(function(){ win.print(); }, 250);
   }
+
+  // ---- "Ny patient": nulstil dette moduls tilstand og UI ----
+  function setRow(id, val){
+    $(id).querySelectorAll('.m2-choice').forEach(function(el){ el.classList.toggle('active', el.dataset.val === val); });
+  }
+  Bryst.wireNyPatient('m2NyPatient');
+  Bryst.onReset(function(){
+    state.radiation = 'none'; state.scar = 'none'; state.smoking = 'no';
+    state.bmi = 24; state.age = 50; state.vol = 350;
+    state.comorbid = false; state.immune = false; state.connective = false; state.bilateral = false;
+    state.expert = true;
+    state.selected = {}; state.pickInclude = {};
+    setRow('m2Radiation', 'none');
+    setRow('m2Scar', 'none');
+    setRow('m2Smoking', 'no');
+    $('m2Bmi').value = 24; $('m2Age').value = 50; $('m2Vol').value = 350;
+    $('m2Comorbid').checked = false; $('m2Immune').checked = false;
+    $('m2Connective').checked = false; $('m2Bilateral').checked = false;
+    $('m2Expert').checked = true;
+    showView('intake');
+  });
 
   showView('intake');
 })();
@@ -2744,6 +2854,14 @@ window.Bryst = (function(){
   }
   $('kTrayCompare').addEventListener('click', openCompare);
   $('kCompareClose').addEventListener('click', function(){ $('kCompareOverlay').hidden = true; });
+
+  // "Ny patient" (udløses fra modulernes headere): ryd sammenligningsbakken
+  Bryst.onReset(function(){
+    tray = {};
+    renderTray();
+    renderFamilies();
+    updateViews();
+  });
 
   var searchTimer;
   $('kSearch').addEventListener('input', function(){
