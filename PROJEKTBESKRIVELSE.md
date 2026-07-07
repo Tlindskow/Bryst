@@ -1,6 +1,6 @@
-# Bryst — Projektbeskrivelse (udkast v0.3)
+# Bryst — Projektbeskrivelse (udkast v0.4)
 
-*Opdateret 2026-07-07. Ændringer fra v0.2: ekspander-forslag ved rekonstruktion, volumen-spænd-garanti, sløring af ikke-eksisterende filterkombinationer, kobling patientmoduler ↔ Modul 1 (patientoversigt-picks), PDF-dokumentation af fravalgte muligheder (implementeret), katalog-tillæggets værktøjer (volumen-opslag, "≈ lignende", fylde-kolonner) og ny forside beskrevet.*
+*Opdateret 2026-07-07. Ændringer fra v0.3: ekspertvisning er standard i Modul 2; "Ny patient"-knap i alle modulheadere (central nulstilling på tværs af moduler). Ændringer fra v0.2: ekspander-forslag ved rekonstruktion, volumen-spænd-garanti, sløring af ikke-eksisterende filterkombinationer, kobling patientmoduler ↔ Modul 1 (patientoversigt-picks), PDF-dokumentation af fravalgte muligheder (implementeret), katalog-tillæggets værktøjer (volumen-opslag, "≈ lignende", fylde-kolonner) og ny forside beskrevet.*
 
 ## Formål
 
@@ -45,9 +45,15 @@ tidligere/planlagt strålebehandling, modsidigt brysts størrelse og ptose (symm
 
 Flowet ender i sammenligningsbillede (fordele/ulemper side om side) af de egnede muligheder. Lægen supplerer mundtligt.
 
+**Ekspertvisning** (lap-typer enkeltvis: DIEP / latissimus dorsi / PAP-TUG) er slået **til som standard** — kan fravælges pr. konsultation, hvis den samlede "Autolog lap"-visning passer bedre til patienten.
+
 ## Modul 3: Privatmodul — augmentation (byg som nr. 2)
 
 Forsimplet flow: rask patient, ønske om større barm. Implantat/fedt/løft/kombination. Genbruger filtermotoren fra modul 1 og flow-komponenterne fra modul 2. Implantatkortet henviser til ris-testen (1 dl ris ≈ 100 cc) som konkret hjemme-redskab til volumenafprøvning.
+
+## "Ny patient" — nulstilling mellem konsultationer
+
+Alle tre modulheadere har en "Ny patient"-knap (i modulets eget udtryk). Den nulstiller efter bekræftelse **alt på tværs af hele værktøjet**: mål/filtre i Modul 1, intake + valgte løsninger i Modul 2 og 3 (begge tilbage til trin 1), patientoversigt-picks og katalogets sammenligningsbakke. Teknisk: central `Bryst.resetAll()`, som hvert modul registrerer sin oprydning på via `Bryst.onReset()` — nye moduler hægter sig automatisk på samme mekanisme. Understøtter kernebeslutning 1 (statelessness): intet fra én patient må hænge ved til den næste.
 
 ## Kobling: patientmoduler ↔ Modul 1
 
