@@ -1,6 +1,6 @@
 # Bryst — Projektbeskrivelse (udkast v0.5)
 
-*Opdateret 2026-07-08. Ændringer fra v0.4 (litteraturudvidelsen — Blondeel I–III + Hedén): Hedén/AK-ptose-vurdering med estimeret LVC pr. implantat i Modul 1 (inkl. printbart AK-markeringsark); brystbevarende gren (⅛/⅜-algoritmen) i Modul 2; Blondeel 3-trins-analyse (footprint/konus/kuvert) i Modul 2 + PDF; forløbstidslinje i Modul 2 + PDF; SGAP/IGAP i ekspertvisningen; symmetriserings-kort i Modul 2; mastopexi-teknikvalg pr. Regnault-grad + sideforskel i Modul 3. Ændringer fra v0.3: ekspertvisning er standard i Modul 2; "Ny patient"-knap i alle modulheadere (central nulstilling på tværs af moduler). Ændringer fra v0.2: ekspander-forslag ved rekonstruktion, volumen-spænd-garanti, sløring af ikke-eksisterende filterkombinationer, kobling patientmoduler ↔ Modul 1 (patientoversigt-picks), PDF-dokumentation af fravalgte muligheder (implementeret), katalog-tillæggets værktøjer (volumen-opslag, "≈ lignende", fylde-kolonner) og ny forside beskrevet.*
+*Opdateret 2026-07-08 (aften). **Modulnumrene er byttet:** Modul 2 = Privatmodul (augmentation), Modul 3 = Sygehusmodul (rekonstruktion) — logisk rækkefølge på forsiden (1-2-3-katalog); hashes, id'er og CSS fulgte med. Nyt i samme omgang: per-side mål/valg ved asymmetri i Modul 1 (Ens/Højre/Venstre — mål, shortlist og picks pr. side); AK-arket åbner nu til browser-visning med print-knap, SVG-skitse af optegningerne og "kort opskrift til rutinerede"; tidsstemplede dokumenttitler (= filnavne ved Gem som PDF) på AK-ark og begge patient-PDF'er; nyt /grafik-genereret app-ikon/favicon (cirkel + profilbue + rød dimensionslinje på grafit). Ændringer fra v0.4 (litteraturudvidelsen — Blondeel I–III + Hedén): Hedén/AK-ptose-vurdering med estimeret LVC pr. implantat i Modul 1 (inkl. printbart AK-markeringsark); brystbevarende gren (⅛/⅜-algoritmen) i Modul 3; Blondeel 3-trins-analyse (footprint/konus/kuvert) i Modul 3 + PDF; forløbstidslinje i Modul 3 + PDF; SGAP/IGAP i ekspertvisningen; symmetriserings-kort i Modul 3; mastopexi-teknikvalg pr. Regnault-grad + sideforskel i Modul 2. Ændringer fra v0.3: ekspertvisning er standard i Modul 3; "Ny patient"-knap i alle modulheadere (central nulstilling på tværs af moduler). Ændringer fra v0.2: ekspander-forslag ved rekonstruktion, volumen-spænd-garanti, sløring af ikke-eksisterende filterkombinationer, kobling patientmoduler ↔ Modul 1 (patientoversigt-picks), PDF-dokumentation af fravalgte muligheder (implementeret), katalog-tillæggets værktøjer (volumen-opslag, "≈ lignende", fylde-kolonner) og ny forside beskrevet.*
 
 ## Formål
 
@@ -28,10 +28,11 @@ Filtermotor over Mentor-kataloget, ikke en algoritme der udpeger "det rigtige im
 - **Ekspander-forslag (2-stadie):** Ved kontekst = rekonstruktion foreslås pr. implantat den nærmeste ekspander (CPX4/Smooth) efter reglen: ekspanderbase ≈ implantatbredde − 0,5 cm (litteratur: endeligt implantat 0,25–1,0 cm bredere end ekspanderens base; Gabriel & Maxwell, Gland Surgery), med højdematch for anatomiske implantater og volumen som sekundært kriterium. Forslaget indgår i journalteksten.
 - **Patientoversigt-picks:** "Til patientoversigt"-knap pr. kort lægger implantatet i en delt in-memory liste (`Bryst.picks`) til brug i patientmodulernes printbare oversigt. Kun i hukommelsen — lukkes vinduet, er listen væk (jf. kernebeslutning 1).
 - **Hedén/AK-ptose-vurdering (kontekst = augmentation):** To ekstra mål — papil→IMF (maksimalt strakt) og central kirtel-pinch. Pr. implantatkort beregnes **LVC** (lower ventral curvature — Mentor opgiver den ikke; estimeres geometrisk som kvart-ellipsebue af højde-andel × projektion, rund 55 %/anatomisk 50 % distalt for projektionspunktet, altid mærket "estimeret") og ideal papil→IMF = LVC + kirtel-pinch/2. Verdikt efter Hedéns regel: hudoverskud **> 2 cm → mastopexi indiceret**; 0,5–2 cm → kan ofte korrigeres med augmentation alene (incision over ILP-linjen + distal dissektion); −2,5–0,5 cm → envelope passer; < −2,5 cm → markant foldesænkning nødvendig (obs dobbelt-boble). Indgår i journalteksten. Kilde: Hedén, Clin Plast Surg 2009 + SFEP 2013-foredraget.
-- **AK-markeringsark:** knap pr. kort (augmentation) åbner et printbart operationsplanlægningsark med implantatets tal indsat: NS-linje (45° armelevation), ILP-linje (halv/55 % implantathøjde), hudbehov i nedre pol — både normal augmentation (A) og mastopexy-augmentation med omvendt planlægning (B), inkl. to-tempi-rækkefølgen (implantat ind før hudresektion) og 2-seance-faldgruben.
+- **AK-markeringsark:** knap pr. kort (augmentation) åbner et ark til **browser-visning** (ingen auto-print; fast "Print / Gem som PDF"-knap, skjult ved print) med implantatets tal indsat: NS-linje (45° armelevation), ILP-linje (halv/55 % implantathøjde), hudbehov i nedre pol — både normal augmentation (A) og mastopexy-augmentation med omvendt planlægning (B), inkl. to-tempi-rækkefølgen (implantat ind før hudresektion) og 2-seance-faldgruben. Indeholder desuden en **abstrakt SVG-skitse** af optegningerne (panel A og B, dynamiske mål indsat — jf. billedpolitikken: kun linjediagrammer) og en **kort opskrift til rutinerede** nederst. Dokumenttitlen (= filnavn ved Gem som PDF) indeholder katalognr., evt. side og tidsstempel.
+- **Asymmetri — mål og valg pr. side:** Toggle "Ens sider / Højre / Venstre" øverst under Mål. Ved per-side gemmes alle mål (bredde, højde, pinch, volumen, papil→IMF, kirtel-pinch) separat pr. side; shortlist-overskriften viser aktiv side, picks mærkes med side (samme implantat kan vælges til begge sider), og side fremgår af journaltekst, AK-ark og patientmodulernes oversigter/PDF'er. Første skift kopierer de fælles mål til begge sider.
 - **Datakvalitet:** Katalogdata ekstraheres og verificeres 100 % manuelt mod PDF'en — ét forkert katalognummer er en patientsikkerhedshændelse. Tjek om produkter i 2023-kataloget er udgået.
 
-## Modul 2: Sygehusmodul — rekonstruktionsflow (byg sidst)
+## Modul 3: Sygehusmodul — rekonstruktionsflow (byg sidst)
 
 Samtaleværktøj til delt skærm. Før flowet udfyldes de parametre, der afgør hvilke muligheder der er tilgængelige.
 
@@ -57,11 +58,11 @@ Flowet ender i sammenligningsbillede (fordele/ulemper side om side) af de egnede
 
 **Symmetrisering af modsatte bryst** er et selvstændigt kort i begge forløb (gråes ved bilateralt indgreb) — i BCT-forløbet med Blondeel III-pointen om at modsidig reduktion alene kan være hele løsningen ved RT-skadet men acceptabelt formet bryst.
 
-## Modul 3: Privatmodul — augmentation (byg som nr. 2)
+## Modul 2: Privatmodul — augmentation (byg som nr. 2)
 
 Forsimplet flow: rask patient, ønske om større barm. Implantat/fedt/løft/kombination. Genbruger filtermotoren fra modul 1 og flow-komponenterne fra modul 2. Implantatkortet henviser til ris-testen (1 dl ris ≈ 100 cc) som konkret hjemme-redskab til volumenafprøvning.
 
-**Mastopexi-lag (Hedén):** Løft-kortet foreslår teknik pr. Regnault-grad (I: periareolær kun til små justeringer — flader NAC og udvider areolaen; II: vertikal; III: inverteret-T med kort fold-ar) og nævner at øvre polfylde efter løft alene aftager over ~6 mdr. Kombinationskortet bærer AK-pointerne: løftet dimensioneres efter implantatets mål (LVC), implantat ind før hudresektion, og ved 2-seance-plan skal 1. seance planlægges efter det senere implantat (klassisk faldgrube). Intake har desuden **sideforskel (asymmetri)** — ja/nej — som føjer en drøftelsesnote til implantat-/kombinationskortene og medtages i PDF'ens grundlag. Den præcise vurdering (2 cm-reglen pr. implantat) ligger i Modul 1 og der henvises dertil.
+**Mastopexi-lag (Hedén):** Løft-kortet foreslår teknik pr. Regnault-grad (I: periareolær kun til små justeringer — flader NAC og udvider areolaen; II: vertikal; III: inverteret-T med kort fold-ar) og nævner at øvre polfylde efter løft alene aftager over ~6 mdr. Kombinationskortet bærer AK-pointerne: løftet dimensioneres efter implantatets mål (LVC), implantat ind før hudresektion, og ved 2-seance-plan skal 1. seance planlægges efter det senere implantat (klassisk faldgrube). Intake har desuden **sideforskel (asymmetri)** — ja/nej — som føjer en drøftelsesnote til implantat-/kombinationskortene (med henvisning til Modul 1's per-side-planlægning: mål og implantatvalg for højre og venstre hver for sig) og medtages i PDF'ens grundlag. Den præcise vurdering (2 cm-reglen pr. implantat) ligger i Modul 1 og der henvises dertil.
 
 ## "Ny patient" — nulstilling mellem konsultationer
 
@@ -69,7 +70,7 @@ Alle tre modulheadere har en "Ny patient"-knap (i modulets eget udtryk). Den nul
 
 ## Kobling: patientmoduler ↔ Modul 1
 
-- Implantat-relaterede valg i Modul 2 (implantat / ekspander / kombination / LD-lap) og Modul 3 (implantat / kombination) har "Åbn implantatvalg →" (`#modul1?fra=modul2|3`).
+- Implantat-relaterede valg i Modul 3 (implantat / ekspander / kombination / LD-lap) og Modul 2 (implantat / kombination) har "Åbn implantatvalg →" (`#modul1?fra=modul2|3`).
 - Modul 1 viser da en retur-bjælke tilbage til samtalen; implantater markeret "Til patientoversigt" vises i patientmodulets sammenlignings-trin med afkrydsning (fravælges pr. styk) og medtages på PDF'en med fulde katalogdata.
 
 ## Tillæg: Digitalt katalog
@@ -97,8 +98,8 @@ Hele Mentor-kataloget som opslagsværktøj i kataloguens egen teal-stil (farveko
 ## Etapeplan
 
 1. **Modul 1** — filtermotor + kopi-knap. Selvstændig værdi fra dag ét, ingen patientvendt risiko. Inkl. manuel verifikation af katalogdata.
-2. **Modul 3** — privatflow (simplest patientvendte flow).
-3. **Modul 2** — sygehusflow (mest komplekst og følsomt).
+2. **Modul 2** — privatflow (simplest patientvendte flow).
+3. **Modul 3** — sygehusflow (mest komplekst og følsomt).
 4. Løbende: PDF-eksport bygges sammen med hvert patientvendt modul.
 
 ## Governance og vedligehold
