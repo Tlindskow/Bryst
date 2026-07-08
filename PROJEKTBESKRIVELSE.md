@@ -1,6 +1,6 @@
-# Bryst — Projektbeskrivelse (udkast v0.4)
+# Bryst — Projektbeskrivelse (udkast v0.5)
 
-*Opdateret 2026-07-07. Ændringer fra v0.3: ekspertvisning er standard i Modul 2; "Ny patient"-knap i alle modulheadere (central nulstilling på tværs af moduler). Ændringer fra v0.2: ekspander-forslag ved rekonstruktion, volumen-spænd-garanti, sløring af ikke-eksisterende filterkombinationer, kobling patientmoduler ↔ Modul 1 (patientoversigt-picks), PDF-dokumentation af fravalgte muligheder (implementeret), katalog-tillæggets værktøjer (volumen-opslag, "≈ lignende", fylde-kolonner) og ny forside beskrevet.*
+*Opdateret 2026-07-08. Ændringer fra v0.4 (litteraturudvidelsen — Blondeel I–III + Hedén): Hedén/AK-ptose-vurdering med estimeret LVC pr. implantat i Modul 1 (inkl. printbart AK-markeringsark); brystbevarende gren (⅛/⅜-algoritmen) i Modul 2; Blondeel 3-trins-analyse (footprint/konus/kuvert) i Modul 2 + PDF; forløbstidslinje i Modul 2 + PDF; SGAP/IGAP i ekspertvisningen; symmetriserings-kort i Modul 2; mastopexi-teknikvalg pr. Regnault-grad + sideforskel i Modul 3. Ændringer fra v0.3: ekspertvisning er standard i Modul 2; "Ny patient"-knap i alle modulheadere (central nulstilling på tværs af moduler). Ændringer fra v0.2: ekspander-forslag ved rekonstruktion, volumen-spænd-garanti, sløring af ikke-eksisterende filterkombinationer, kobling patientmoduler ↔ Modul 1 (patientoversigt-picks), PDF-dokumentation af fravalgte muligheder (implementeret), katalog-tillæggets værktøjer (volumen-opslag, "≈ lignende", fylde-kolonner) og ny forside beskrevet.*
 
 ## Formål
 
@@ -27,6 +27,8 @@ Filtermotor over Mentor-kataloget, ikke en algoritme der udpeger "det rigtige im
 - **Ikke-eksisterende kombinationer:** Filterknapper, der ville give nul kandidater (fx glat + anatomisk — findes ikke i Mentor-kataloget), skraveres og kan ikke vælges. Beregnes dynamisk fra katalogdata, så det følger med ved katalogopdateringer. Ved ekspander-søgning er form-togglen inaktiv (form filtreres ikke for ekspandere).
 - **Ekspander-forslag (2-stadie):** Ved kontekst = rekonstruktion foreslås pr. implantat den nærmeste ekspander (CPX4/Smooth) efter reglen: ekspanderbase ≈ implantatbredde − 0,5 cm (litteratur: endeligt implantat 0,25–1,0 cm bredere end ekspanderens base; Gabriel & Maxwell, Gland Surgery), med højdematch for anatomiske implantater og volumen som sekundært kriterium. Forslaget indgår i journalteksten.
 - **Patientoversigt-picks:** "Til patientoversigt"-knap pr. kort lægger implantatet i en delt in-memory liste (`Bryst.picks`) til brug i patientmodulernes printbare oversigt. Kun i hukommelsen — lukkes vinduet, er listen væk (jf. kernebeslutning 1).
+- **Hedén/AK-ptose-vurdering (kontekst = augmentation):** To ekstra mål — papil→IMF (maksimalt strakt) og central kirtel-pinch. Pr. implantatkort beregnes **LVC** (lower ventral curvature — Mentor opgiver den ikke; estimeres geometrisk som kvart-ellipsebue af højde-andel × projektion, rund 55 %/anatomisk 50 % distalt for projektionspunktet, altid mærket "estimeret") og ideal papil→IMF = LVC + kirtel-pinch/2. Verdikt efter Hedéns regel: hudoverskud **> 2 cm → mastopexi indiceret**; 0,5–2 cm → kan ofte korrigeres med augmentation alene (incision over ILP-linjen + distal dissektion); −2,5–0,5 cm → envelope passer; < −2,5 cm → markant foldesænkning nødvendig (obs dobbelt-boble). Indgår i journalteksten. Kilde: Hedén, Clin Plast Surg 2009 + SFEP 2013-foredraget.
+- **AK-markeringsark:** knap pr. kort (augmentation) åbner et printbart operationsplanlægningsark med implantatets tal indsat: NS-linje (45° armelevation), ILP-linje (halv/55 % implantathøjde), hudbehov i nedre pol — både normal augmentation (A) og mastopexy-augmentation med omvendt planlægning (B), inkl. to-tempi-rækkefølgen (implantat ind før hudresektion) og 2-seance-faldgruben.
 - **Datakvalitet:** Katalogdata ekstraheres og verificeres 100 % manuelt mod PDF'en — ét forkert katalognummer er en patientsikkerhedshændelse. Tjek om produkter i 2023-kataloget er udgået.
 
 ## Modul 2: Sygehusmodul — rekonstruktionsflow (byg sidst)
@@ -45,11 +47,21 @@ tidligere/planlagt strålebehandling, modsidigt brysts størrelse og ptose (symm
 
 Flowet ender i sammenligningsbillede (fordele/ulemper side om side) af de egnede muligheder. Lægen supplerer mundtligt.
 
-**Ekspertvisning** (lap-typer enkeltvis: DIEP / latissimus dorsi / PAP-TUG) er slået **til som standard** — kan fravælges pr. konsultation, hvis den samlede "Autolog lap"-visning passer bedre til patienten.
+**Ekspertvisning** (lap-typer enkeltvis: DIEP / latissimus dorsi / PAP-TUG / **SGAP-IGAP**) er slået **til som standard** — kan fravælges pr. konsultation, hvis den samlede "Autolog lap"-visning passer bedre til patienten. SGAP/IGAP-kortet bærer Blondeel II-forbeholdene (fastere væv, lille hudø, bedst ved primær rekonstruktion, bilateral ofte i to seancer).
+
+**Brystbevarende gren (Blondeel III):** Intake-feltet "Udgangspunkt" skifter mellem mastektomi- og BCT-forløb. BCT spørger om defekt-andel (⅛/⅜-grænserne) og timing (immediat/senere) og viser fem kort: glandulær remodellering (< ⅛), lokoregional lap TDAP/LICAP/AICAP (⅛–⅜, +20 % volumen ved immediat før RT, "brænd ikke broer"-forbeholdet), lipofilling (2–3+ seancer; forbedrer RT-hud, tilfører ikke hud), mastektomi + total rekonstruktion (> ⅜; Cocquyt 2003) og symmetrisering. RT-ventereglen (6–12 mdr før endelig vurdering) går igen som note. Ekspertvisningstoggle skjules i BCT-forløbet.
+
+**Blondeel 3-trins-analyse (valgfri):** Intake kan registrere status for footprint (intakt/deformeret/mangler), konus (intakt/delvis/mangler) og hudkuvert (ok/stram-RT-beskadiget/mangler). Udfyldt analyse vises som opsummering med afledt strategi (fx "footprint retableres først") i oversigten og medtages i PDF'en. Default "ikke vurderet" — påvirker aldrig filtreringen, kun dokumentationen.
+
+**Forløbstidslinje:** Sammenlignings-trinnet viser det typiske etapeforløb for de valgte muligheder (OP1 med bevidst 5–10 %/15–20 % volumenoverskud ved autolog · ekspanderfyldning · ~6 mdr sætning · OP2 justering/symmetri/papil · +3 mdr areola-tatovering; BCT-variant med RT-stabilisering 6–12 mdr). Medtages i PDF'en som "Forventet forløb" — dokumenterer at etaperne er planen, ikke en komplikation (Blondeel II).
+
+**Symmetrisering af modsatte bryst** er et selvstændigt kort i begge forløb (gråes ved bilateralt indgreb) — i BCT-forløbet med Blondeel III-pointen om at modsidig reduktion alene kan være hele løsningen ved RT-skadet men acceptabelt formet bryst.
 
 ## Modul 3: Privatmodul — augmentation (byg som nr. 2)
 
 Forsimplet flow: rask patient, ønske om større barm. Implantat/fedt/løft/kombination. Genbruger filtermotoren fra modul 1 og flow-komponenterne fra modul 2. Implantatkortet henviser til ris-testen (1 dl ris ≈ 100 cc) som konkret hjemme-redskab til volumenafprøvning.
+
+**Mastopexi-lag (Hedén):** Løft-kortet foreslår teknik pr. Regnault-grad (I: periareolær kun til små justeringer — flader NAC og udvider areolaen; II: vertikal; III: inverteret-T med kort fold-ar) og nævner at øvre polfylde efter løft alene aftager over ~6 mdr. Kombinationskortet bærer AK-pointerne: løftet dimensioneres efter implantatets mål (LVC), implantat ind før hudresektion, og ved 2-seance-plan skal 1. seance planlægges efter det senere implantat (klassisk faldgrube). Intake har desuden **sideforskel (asymmetri)** — ja/nej — som føjer en drøftelsesnote til implantat-/kombinationskortene og medtages i PDF'ens grundlag. Den præcise vurdering (2 cm-reglen pr. implantat) ligger i Modul 1 og der henvises dertil.
 
 ## "Ny patient" — nulstilling mellem konsultationer
 
@@ -112,3 +124,5 @@ Ingen. Udkastet er byggeklart.
 - Mentor Product Guide, EMEA, effective 2023 (implantater, sizere, ekspandere — tabeldata verificeret egnet til ekstraktion).
 - DBCG: Kirurgisk behandling af brystkræft, v3.1, adm. godkendt 27-11-2024.
 - Gabriel & Maxwell: *Implant selection in the setting of prepectoral breast reconstruction*, Gland Surgery — grundlag for ekspander/implantat-breddematch (implantat 0,25–1,0 cm bredere end ekspanderbase).
+- Blondeel et al.: *Shaping the Breast … An Easy Three-Step Principle*, del I–III, Plast Reconstr Surg 2009 — 3-trins-analysen (footprint/konus/kuvert), ⅛/⅜-algoritmen efter brystbevarende kirurgi, etapeforløbet og volumenoverskudsreglerne, SGAP/IGAP-forbeholdene. PDF'er i `artikler/` (**ikke i git**, ophavsretligt tredjepartsmateriale).
+- Hedén: *Mastopexy Augmentation with Form Stable Breast Implants*, Clin Plast Surg 2009 + SFEP 2013-foredrag (YouTube EyVfUeH6bfU) — AK-metoden: NS-linje, ILP-linje, LVC, 2 cm-reglen for mastopexi-indikation, omvendt planlægning ved mastopexy-augmentation. NB: LVC-værdier i værktøjet er geometriske estimater (Hedéns publicerede tal gælder Allergan).

@@ -2,7 +2,7 @@
 <html lang="da">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Bryst — Implantatvalg</title>
 <meta name="description" content="Lægefagligt filterværktøj til valg af brystimplantat. Modul 1 af Bryst.">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png">
@@ -72,9 +72,21 @@
   .screen{ display:none; }
   .screen.active{ display:block; }
 
+  /* Klikbart brand i modulheadere → tilbage til forsiden */
+  .brand-home{ color:inherit; text-decoration:none; cursor:pointer; }
+  .brand-home:hover{ opacity:.75; }
+  .brand-home:focus-visible{ outline:2px solid var(--focus); outline-offset:2px; }
+
+  /* PWA/standalone: hold headere og indhold fri af statusbjælke/notch */
+  header.instrument, .m2-header, .m3-header, .k-hero{
+    padding-top:calc(14px + env(safe-area-inset-top, 0px));
+  }
+  .m2-header, .m3-header{ padding-top:calc(22px + env(safe-area-inset-top, 0px)); }
+  .k-hero{ padding-top:calc(30px + env(safe-area-inset-top, 0px)); }
+
   /* ---------- Forside: fire døre, ét instrument ---------- */
   .entry{
-    position:relative; min-height:100vh;
+    position:relative; min-height:100vh; min-height:100svh;
     display:flex; flex-direction:column;
     background:var(--paper); overflow:hidden;
   }
@@ -85,7 +97,7 @@
     opacity:.85; will-change:transform;
   }
 
-  .entry-hero{ position:relative; text-align:center; padding:8vh 24px 5vh; will-change:transform; }
+  .entry-hero{ position:relative; text-align:center; padding:calc(8vh + env(safe-area-inset-top, 0px)) 24px 5vh; will-change:transform; }
   .entry-eyebrow{
     font-family:var(--mono); font-size:11px; letter-spacing:.22em; text-transform:uppercase;
     color:var(--ink-soft); margin-bottom:14px;
@@ -161,7 +173,8 @@
   @keyframes silDraw{ to{ stroke-dashoffset:0; } }
 
   .entry-stamp{
-    position:relative; text-align:center; padding:12px 20px;
+    position:relative; text-align:center;
+    padding:12px 20px calc(12px + env(safe-area-inset-bottom, 0px));
     font-family:var(--mono); font-size:10px; letter-spacing:.05em; color:var(--ink-faint);
     background:var(--paper); border-top:1px solid var(--line);
   }
@@ -181,7 +194,10 @@
 
   @media (max-width: 880px){
     .entry{ min-height:100svh; }
-    .entry-hero{ padding-top:10vh; }
+    .entry-hero{ padding-top:calc(7vh + env(safe-area-inset-top, 0px)); }
+    .entry-dim{ max-width:min(560px, 94%); }
+    .entry-dim .dim-label{ white-space:normal; text-align:center; line-height:1.5; max-width:70vw; }
+    .entry-sub{ max-width:min(460px, 88%); }
     .doors{ flex-direction:column; }
     .door{ min-height:132px; border-left:none; border-top:1px solid rgba(28,38,36,.08); padding:20px 22px; }
     .door:hover, .door:focus-visible{ flex-grow:1; }
@@ -397,6 +413,24 @@
     color:var(--redline); display:block; margin-bottom:2px;
   }
 
+  /* Hedén/AK-vurdering pr. implantatkort (LVC + ptose-verdikt) */
+  .heden-suggest{
+    margin-top:8px; padding:6px 10px;
+    background:#F3F5F3; border-left:2px solid var(--ink-faint);
+    font-size:11.5px; color:var(--ink-soft);
+  }
+  .heden-suggest b{ color:var(--ink); font-family:var(--mono); font-weight:600; }
+  .heden-suggest .es-label{
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--ink-soft); display:block; margin-bottom:2px;
+  }
+  .heden-suggest.mastopexy{ border-left-color:var(--redline); background:var(--redline-wash); }
+  .heden-suggest.mastopexy .es-label{ color:var(--redline); }
+  .heden-suggest.border{ border-left-color:#B08A2E; background:#F8F3E6; }
+  .heden-suggest.border .es-label{ color:#8F6E20; }
+  .heden-suggest.tight{ border-left-color:#B08A2E; background:#F8F3E6; }
+  .heden-suggest.tight .es-label{ color:#8F6E20; }
+
   button.pick-btn{
     font-family:var(--sans); font-size:12px; font-weight:600;
     padding:6px 12px; background:none; color:var(--ink-soft);
@@ -405,6 +439,14 @@
   button.pick-btn:hover{ border-color:var(--redline); color:var(--ink); }
   button.pick-btn.picked{ background:var(--redline); border-color:var(--redline); color:var(--paper); }
   button.pick-btn:focus-visible{ outline:2px solid var(--focus); outline-offset:2px; }
+
+  button.ak-btn{
+    font-family:var(--sans); font-size:12px; font-weight:600;
+    padding:6px 12px; background:none; color:var(--ink-soft);
+    border:1px solid var(--line-strong); cursor:pointer; white-space:nowrap;
+  }
+  button.ak-btn:hover{ border-color:var(--redline); color:var(--ink); }
+  button.ak-btn:focus-visible{ outline:2px solid var(--focus); outline-offset:2px; }
 
   .divider{ height:1px; background:var(--line); margin:22px 0; }
 
@@ -754,6 +796,22 @@
   .m2-option.muted .m2-option-select{ display:none; }
   .m2-option-select.picked{ background:var(--sage-deep); color:#fff; }
 
+  /* Forløbstidslinje (Blondeel II: resultatet bygges i etaper) */
+  .m2-timeline{ margin-top:34px; padding:22px 24px; border:1px solid var(--line-warm); border-radius:5px; background:#fff; }
+  .m2-timeline-head{ font-weight:600; font-size:15px; margin-bottom:14px; }
+  .m2-tl-step{ position:relative; padding:0 0 16px 26px; }
+  .m2-tl-step:before{ content:''; position:absolute; left:6px; top:5px; width:8px; height:8px; border-radius:50%; background:var(--sage-deep); }
+  .m2-tl-step:after{ content:''; position:absolute; left:9.5px; top:16px; bottom:-2px; width:1px; background:var(--line-warm); }
+  .m2-tl-step:last-child{ padding-bottom:0; }
+  .m2-tl-step:last-child:after{ display:none; }
+  .m2-tl-t{ font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--sage-deep); font-weight:600; }
+  .m2-tl-d{ font-size:13px; color:var(--ink2-soft); margin-top:2px; line-height:1.55; }
+  .m2-tl-note{ font-size:12px; font-style:italic; color:var(--ink2-faint); margin-top:12px; }
+
+  /* Blondeel 3-trins-analyse: opsummeringsboks i oversigten */
+  .m2-blondeel-summary{ margin:18px 0 0; padding:12px 16px; background:var(--sage-wash); border-left:3px solid var(--sage-deep); font-size:13px; color:var(--ink2-soft); line-height:1.6; }
+  .m2-blondeel-summary b{ color:var(--ink2); }
+
   .m2-compare{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); }
   .m2-compare-col{ padding:8px 22px 22px; border-left:1px solid var(--line-warm); }
   .m2-compare-col:first-child{ border-left:none; padding-left:0; }
@@ -995,7 +1053,7 @@
 <header class="instrument">
   <div>
     <div class="eyebrow">Implantatvalg</div>
-    <h1>Bryst<span class="module-tag">Lægemodul · Modul 1</span></h1>
+    <h1><a class="brand-home" href="#" title="Til forsiden">Bryst</a><span class="module-tag">Lægemodul · Modul 1</span></h1>
   </div>
   <div class="head-right">
     <div class="stamp">
@@ -1061,6 +1119,22 @@
 
     <div class="divider"></div>
 
+    <h2>Ptose-vurdering (Hedén/AK)</h2>
+
+    <div class="field">
+      <label>Papil→IMF, strakt <span class="value"><span id="nimfVal" class="num">9.5</span> cm</span></label>
+      <input type="range" id="nimf" min="4" max="18" step="0.5" value="9.5">
+      <div class="hint">Målt fra papil til submammærfuren med <b>maksimalt strakt</b> hud. Sammenholdes pr. implantat med LVC + kirtelbidrag (Hedén-reglen: overskud &gt; 2 cm → mastopexi).</div>
+    </div>
+
+    <div class="field">
+      <label>Kirtel-pinch centralt <span class="value"><span id="glandVal" class="num">3.0</span> cm</span></label>
+      <input type="range" id="gland" min="0" max="8" step="0.5" value="3">
+      <div class="hint">Central glandulær pinch — kirtelbidraget (pinch/2) lægges til implantatets LVC ved beregning af ideal papil→IMF-afstand.</div>
+    </div>
+
+    <div class="divider"></div>
+
     <h2>Overflade og form</h2>
     <div class="field">
       <div class="toggle-row" id="textureToggle">
@@ -1091,13 +1165,13 @@
 
 <footer class="instrument">
   <span>Filtrering, ikke anbefaling — endeligt implantat afgøres peroperativt med sizer. <a class="back-link" href="#">← Skift modul</a></span>
-  <span>Kilder: Mentor Product Guide EMEA 2023 · Tebbetts &amp; Adams, PRS 2005/2025</span>
+  <span>Kilder: Mentor Product Guide EMEA 2023 · Tebbetts &amp; Adams, PRS 2005/2025 · Hedén, Clin Plast Surg 2009 (AK-metoden; LVC estimeret geometrisk)</span>
 </footer>
 </div><!-- /screen-modul1 -->
 
 <div id="screen-modul2" class="screen">
   <div class="m2-header">
-    <div class="m2-brand">Bryst <span>· Sygehusmodul</span></div>
+    <div class="m2-brand"><a class="brand-home" href="#" title="Til forsiden">Bryst</a> <span>· Sygehusmodul</span></div>
     <div class="head-right">
       <div class="m2-step" id="m2StepLabel">Trin <b>1</b> af 3 · Mål</div>
       <button class="np-btn" id="m2NyPatient" title="Nulstil alle indtastninger og valg i alle moduler">Ny patient</button>
@@ -1111,6 +1185,29 @@
       <div class="m2-intro">
         <h1>Hvilke muligheder er relevante her?</h1>
         <p>Udfyldes ved konsultationen. Der gemmes ikke noget — luk vinduet, og alt er væk.</p>
+      </div>
+
+      <div class="m2-field">
+        <label>Udgangspunkt</label>
+        <div class="m2-choice-row" id="m2Surgery">
+          <div class="m2-choice active" data-val="mastectomy">Mastektomi (hele brystet fjernet/fjernes)</div>
+          <div class="m2-choice" data-val="bct">Brystbevarende operation (del af brystet)</div>
+        </div>
+      </div>
+
+      <div class="m2-field" id="m2BctFields" style="display:none;">
+        <label>Hvor stor en del af kirtlen fjernes/mangler?</label>
+        <div class="m2-choice-row" id="m2BctFraction">
+          <div class="m2-choice active" data-val="small">Under ⅛</div>
+          <div class="m2-choice" data-val="medium">⅛ – ⅜</div>
+          <div class="m2-choice" data-val="large">Over ⅜</div>
+        </div>
+        <div class="m2-hint" style="margin-bottom:14px;">Andel af den samlede kirtel (vurderet eller vejet — husk evt. tidligere resektioner). Grænserne ⅛ og ⅜ styrer hvilke teknikker der er realistiske (Blondeel III).</div>
+        <label>Tidspunkt</label>
+        <div class="m2-choice-row" id="m2BctTiming">
+          <div class="m2-choice active" data-val="immediate">Samtidig med kræftoperationen</div>
+          <div class="m2-choice" data-val="delayed">Senere korrektion</div>
+        </div>
       </div>
 
       <div class="m2-field">
@@ -1156,6 +1253,34 @@
         <div class="m2-checkline"><input type="checkbox" id="m2Bilateral"> Bilateralt indgreb (begge sider)</div>
       </div>
 
+      <div class="m2-field">
+        <label>Blondeel 3-trins-analyse (valgfri)</label>
+        <div class="m2-hint" style="margin-bottom:10px;">Status pr. anatomisk enhed — footprint (brystets aftryk på thoraxvæggen), konus (volumen/form) og hudkuvert. Udfyldt analyse indgår i oversigten og PDF'en (Blondeel I).</div>
+        <div style="display:grid; grid-template-columns:auto 1fr; gap:8px 14px; align-items:center;">
+          <span class="m2-hint" style="margin:0;">Footprint</span>
+          <div class="m2-choice-row" id="m2Footprint">
+            <div class="m2-choice active" data-val="na">Ikke vurderet</div>
+            <div class="m2-choice" data-val="intact">Intakt</div>
+            <div class="m2-choice" data-val="deformed">Deformeret</div>
+            <div class="m2-choice" data-val="missing">Mangler</div>
+          </div>
+          <span class="m2-hint" style="margin:0;">Konus</span>
+          <div class="m2-choice-row" id="m2Conus">
+            <div class="m2-choice active" data-val="na">Ikke vurderet</div>
+            <div class="m2-choice" data-val="intact">Intakt</div>
+            <div class="m2-choice" data-val="partial">Delvis defekt</div>
+            <div class="m2-choice" data-val="missing">Mangler</div>
+          </div>
+          <span class="m2-hint" style="margin:0;">Hudkuvert</span>
+          <div class="m2-choice-row" id="m2Envelope">
+            <div class="m2-choice active" data-val="na">Ikke vurderet</div>
+            <div class="m2-choice" data-val="ok">Tilstrækkelig, elastisk</div>
+            <div class="m2-choice" data-val="tight">Stram / RT-beskadiget</div>
+            <div class="m2-choice" data-val="missing">Hud mangler</div>
+          </div>
+        </div>
+      </div>
+
       <div class="m2-actions">
         <button class="m2-btn" id="m2ToOverview">Se muligheder →</button>
       </div>
@@ -1164,9 +1289,10 @@
     <!-- Trin 2: overview -->
     <div id="m2-view-overview" class="m2-view">
       <div class="m2-intro">
-        <h1>Fire veje til rekonstruktion</h1>
-        <p>Der findes ingen evidens for, at én rekonstruktionstype er mere anbefalelsesværdig end en anden (DBCG). Alle muligheder vises — også dem der passer mindre godt her, med begrundelse.</p>
-        <div class="m2-checkline" style="margin-top:18px;"><input type="checkbox" id="m2Expert" checked> Ekspertvisning — vis lap-typer enkeltvis (DIEP / latissimus dorsi / PAP-TUG)</div>
+        <h1 id="m2OverviewH1">Veje til rekonstruktion</h1>
+        <p id="m2OverviewIntro">Der findes ingen evidens for, at én rekonstruktionstype er mere anbefalelsesværdig end en anden (DBCG). Alle muligheder vises — også dem der passer mindre godt her, med begrundelse.</p>
+        <div class="m2-checkline" style="margin-top:18px;" id="m2ExpertLine"><input type="checkbox" id="m2Expert" checked> Ekspertvisning — vis lap-typer enkeltvis (DIEP / latissimus dorsi / PAP-TUG / SGAP-IGAP)</div>
+        <div id="m2BlondeelSummary"></div>
       </div>
       <div class="m2-option-list" id="m2Options"></div>
       <div class="m2-actions">
@@ -1182,6 +1308,7 @@
         <p>Ingen af mulighederne er rangeret — lægen supplerer mundtligt.</p>
       </div>
       <div class="m2-compare" id="m2Compare"></div>
+      <div id="m2Timeline"></div>
       <div id="m2PicksBox"></div>
       <div class="m2-actions">
         <button class="m2-btn secondary" id="m2BackToOverview">← Tilbage</button>
@@ -1189,7 +1316,7 @@
       </div>
       <div class="m2-disclaimer">
         Denne oversigt supplerer men erstatter ikke journalført informeret samtykke. Ingen data gemmes.<br>
-        Datagrundlag: DBCG Kirurgisk behandling af brystkræft, v3.1 (godkendt 27-11-2024) · plastikkirurgisk litteratur om lap-egnethed, se kildeliste i PDF.
+        Datagrundlag: DBCG Kirurgisk behandling af brystkræft, v3.1 (godkendt 27-11-2024) · Blondeel et al., PRS 2009 (3-trins-princippet) · plastikkirurgisk litteratur om lap-egnethed, se kildeliste i PDF.
       </div>
     </div>
 
@@ -1198,7 +1325,7 @@
 
 <div id="screen-modul3" class="screen">
   <div class="m3-header">
-    <div class="m3-brand">Bryst <span>· Privatmodul</span></div>
+    <div class="m3-brand"><a class="brand-home" href="#" title="Til forsiden">Bryst</a> <span>· Privatmodul</span></div>
     <div class="head-right">
       <div class="m3-step" id="m3StepLabel">Trin <b>1</b> af 3 · Mål</div>
       <button class="np-btn" id="m3NyPatient" title="Nulstil alle indtastninger og valg i alle moduler">Ny patient</button>
@@ -1231,7 +1358,15 @@
           <div class="m3-choice" data-val="2">Grad II</div>
           <div class="m3-choice" data-val="3">Grad III</div>
         </div>
-        <div class="m3-hint">Regnault-klassifikation: papilposition i forhold til submammærfuren.</div>
+        <div class="m3-hint">Regnault-klassifikation: papilposition i forhold til submammærfuren. Præcis vurdering pr. implantat (Hedén-reglen: hudoverskud &gt; 2 cm → løft) findes i lægemodulet.</div>
+      </div>
+
+      <div class="m3-field">
+        <label><b>Sideforskel</b> — væsentlig asymmetri mellem brysterne</label>
+        <div class="m3-choice-row" id="m3Asym">
+          <div class="m3-choice active" data-val="no">Nej</div>
+          <div class="m3-choice" data-val="yes">Ja</div>
+        </div>
       </div>
 
       <div class="m3-field">
@@ -1282,7 +1417,7 @@
 
 <div id="screen-katalog" class="screen">
   <div class="k-hero">
-    <div class="k-tag">Bryst · Tillæg</div>
+    <div class="k-tag"><a class="brand-home" href="#" title="Til forsiden">Bryst</a> · Tillæg</div>
     <div class="k-wordmark">MENTOR<span>Digitalt katalog</span></div>
     <div class="k-search">
       <span class="k-search-icon">⌕</span>
@@ -1434,6 +1569,54 @@ window.Bryst = (function(){
     return best;
   }
 
+  // ---- Hedén / Akademikliniken-metoden (Clin Plast Surg 2009; SFEP 2013) ----
+  // LVC (lower ventral curvature): buelængden på implantatets ventrale flade fra
+  // projektionspunktet ned til nedre kant. Mentor opgiver ikke LVC — den estimeres
+  // geometrisk som kvart-ellipsebue i sagittalsnittet (lodret halvakse = andelen af
+  // højden under projektionspunktet, vandret halvakse = projektionen).
+  // Rund: 55 % af højden distalt for projektionspunktet (Hedén); anatomisk: 50 %.
+  function lvcOf(item){
+    var w = widthOf(item);
+    var proj = item.projection_cm != null ? item.projection_cm : item.nominal_projection_cm;
+    if (w == null || proj == null) return null;
+    var h = item.height_cm != null ? item.height_cm : w; // rund: højde = diameter
+    var a = h * (item.shape === 'anatomical' ? 0.5 : 0.55);
+    var b = proj;
+    var t = Math.pow((a - b) / (a + b), 2); // Ramanujan-approksimation af ellipseomkreds
+    return Math.PI * (a + b) * (1 + 3 * t / (10 + Math.sqrt(4 - 3 * t))) / 4;
+  }
+
+  // Ideal hudlængde papil→submammærfure (maksimalt strakt) = LVC + kirtelbidrag
+  // (Hedén: central kirtel-pinch / 2). Verdikt ud fra målt papil→IMF:
+  //   overskud > 2 cm  → mastopexi indiceret (Hedéns grænse)
+  //   0,5–2 cm         → moderat ptose; kan ofte korrigeres med augmentation alene
+  //                      (incision over ILP-linjen, distal dissektion, fold resutureres)
+  //   −2,5 – 0,5 cm    → envelope passer (et vist hud-underskud er normalt — implantatet
+  //                      strækker selv nedre pol; folden kan sænkes let)
+  //   < −2,5 cm        → implantatet kræver væsentligt mere nedre-pol-hud end der findes:
+  //                      markant foldesænkning, obs dobbelt-boble (Hedén)
+  function hedenAssess(item, nimfMeasuredCm, glandPinchCm){
+    var lvc = lvcOf(item);
+    if (lvc == null || !nimfMeasuredCm) return null;
+    var needed = lvc + (glandPinchCm || 0) / 2;
+    var surplus = nimfMeasuredCm - needed;
+    var cls, label;
+    if (surplus > 2){
+      cls = 'mastopexy';
+      label = 'hudoverskud ' + surplus.toFixed(1) + ' cm (> 2 cm) — mastopexi indiceret ved dette implantat';
+    } else if (surplus > 0.5){
+      cls = 'border';
+      label = 'hudoverskud ' + surplus.toFixed(1) + ' cm (≤ 2 cm) — kan ofte korrigeres med augmentation alene (incision over ILP-linjen + distal dissektion)';
+    } else if (surplus >= -2.5){
+      cls = 'fit';
+      label = 'envelope passer til implantatet (Δ ' + surplus.toFixed(1) + ' cm — implantatet strækker selv nedre pol)';
+    } else {
+      cls = 'tight';
+      label = 'kræver ' + Math.abs(surplus).toFixed(1) + ' cm mere nedre-pol-hud end målt — markant foldesænkning nødvendig; obs dobbelt-boble. Overvej lavere projektion/højde';
+    }
+    return { lvc: lvc, needed: needed, surplus: surplus, cls: cls, label: label };
+  }
+
   function profileLabel(item){
     var parts = [];
     if (item.line) parts.push(item.line);
@@ -1580,6 +1763,8 @@ window.Bryst = (function(){
     clamp: clamp,
     filterImplants: filterImplants,
     suggestExpander: suggestExpander,
+    lvcOf: lvcOf,
+    hedenAssess: hedenAssess,
     picks: picks,
     onReset: onReset,
     resetAll: resetAll,
@@ -1686,6 +1871,8 @@ window.Bryst = (function(){
     spp: 24,
     ipp: 10,
     vol: 320,
+    nimf: 9.5,
+    gland: 3,
     texture: 'any',
     shape: 'any'
   };
@@ -1761,6 +1948,8 @@ window.Bryst = (function(){
   wireSlider('spp', 'sppVal', 'spp', 0);
   wireSlider('ipp', 'ippVal', 'ipp', 0);
   wireSlider('vol', 'volVal', 'vol', 0);
+  wireSlider('nimf', 'nimfVal', 'nimf', 1);
+  wireSlider('gland', 'glandVal', 'gland', 1);
 
   function copyText(item){
     var expanderLine = '';
@@ -1768,6 +1957,13 @@ window.Bryst = (function(){
       var exp = Bryst.suggestExpander(item);
       if (exp){
         expanderLine = 'Ved 2-stadie: nærmeste ekspander ' + exp.line + ', ' + Bryst.catalogLabel(exp) + ', ' + exp.volume_cc + ' cc, bredde ' + Bryst.widthOf(exp).toFixed(1) + ' cm' + (exp.height_cm ? ', højde ' + exp.height_cm.toFixed(1) + ' cm' : '') + '.\n';
+      }
+    }
+    var hedenLine = '';
+    if (state.context === 'augmentation'){
+      var hd = Bryst.hedenAssess(item, state.nimf, state.gland);
+      if (hd){
+        hedenLine = 'Hedén/AK (LVC estimeret geometrisk): LVC ≈ ' + hd.lvc.toFixed(1) + ' cm; ideal papil→IMF (strakt) ≈ ' + hd.needed.toFixed(1) + ' cm; målt ' + state.nimf.toFixed(1) + ' cm → ' + hd.label + '.\n';
       }
     }
     var journalLine = 'Implantatplan (Bryst-værktøj — filtrering, ikke endeligt valg)\n' +
@@ -1778,8 +1974,9 @@ window.Bryst = (function(){
       (item.height_cm ? ' · Højde: ' + item.height_cm.toFixed(1) + ' cm' : '') +
       (item.projection_cm ? ' · Projektion: ' + item.projection_cm.toFixed(1) + ' cm' : '') + '\n' +
       expanderLine +
+      hedenLine +
       'Placering: [udfyldes]  ·  Incision: [udfyldes]\n' +
-      'Mål lagt til grund: brystbredde ' + state.width.toFixed(1) + ' cm, brysthøjde ' + state.height.toFixed(1) + ' cm, superior pinch ' + state.spp + ' mm, inferior pinch ' + state.ipp + ' mm, ønsket volumen ' + state.vol + ' cc.\n' +
+      'Mål lagt til grund: brystbredde ' + state.width.toFixed(1) + ' cm, brysthøjde ' + state.height.toFixed(1) + ' cm, superior pinch ' + state.spp + ' mm, inferior pinch ' + state.ipp + ' mm, ønsket volumen ' + state.vol + ' cc' + (state.context === 'augmentation' ? ', papil→IMF (strakt) ' + state.nimf.toFixed(1) + ' cm, kirtel-pinch ' + state.gland.toFixed(1) + ' cm' : '') + '.\n' +
       'Endeligt implantat afgøres peroperativt med sizer. Datagrundlag: Mentor Product Guide, effective 2023.';
     return journalLine;
   }
@@ -1812,6 +2009,14 @@ window.Bryst = (function(){
               Bryst.widthOf(exp).toFixed(1) + (exp.height_cm ? ' × ' + exp.height_cm.toFixed(1) : '') + ' cm</div>';
           }
         }
+        var hedenHtml = '';
+        if (state.context === 'augmentation'){
+          var hd = Bryst.hedenAssess(item, state.nimf, state.gland);
+          if (hd){
+            hedenHtml = '<div class="heden-suggest ' + hd.cls + '"><span class="es-label">Hedén/AK · LVC estimeret</span>' +
+              'LVC ≈ <b>' + hd.lvc.toFixed(1) + '</b> cm · behov papil→IMF ≈ <b>' + hd.needed.toFixed(1) + '</b> cm (strakt) — ' + hd.label + '</div>';
+          }
+        }
         var dv = Bryst.volumeOf(item) - state.vol;
         var dvTxt = (dv >= 0 ? '+' : '−') + Math.round(Math.abs(dv));
         var picked = Bryst.picks.has(item);
@@ -1828,10 +2033,12 @@ window.Bryst = (function(){
             '</div>' +
             '<div class="codes">' + Bryst.catalogLabel(item) + '</div>' +
             expHtml +
+            hedenHtml +
           '</div>' +
           '<div class="actions">' +
             '<button class="copy-btn" data-idx="' + i + '">Kopiér journaltekst</button>' +
             '<button class="pick-btn' + (picked ? ' picked' : '') + '" data-idx="' + i + '">' + (picked ? '✓ På patientoversigt' : '+ Til patientoversigt') + '</button>' +
+            (state.context === 'augmentation' && !state.expanderSearch ? '<button class="ak-btn" data-idx="' + i + '" title="Printbart markeringsark efter Akademikliniken-metoden (Hedén)">AK-markeringsark</button>' : '') +
             '<span class="match-score">Δ bredde ' + item._widthDelta.toFixed(1) + ' cm' + (item._heightDelta != null ? ' · Δ højde ' + item._heightDelta.toFixed(1) + ' cm' : '') + ' · Δ vol ' + dvTxt + ' cc</span>' +
           '</div>' +
         '</div>';
@@ -1854,6 +2061,11 @@ window.Bryst = (function(){
           render();
         });
       });
+      container.querySelectorAll('.ak-btn').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          printAkSheet(out.results[parseInt(btn.dataset.idx, 10)]);
+        });
+      });
     }
 
     var notes = [];
@@ -1870,6 +2082,75 @@ window.Bryst = (function(){
       notes.push('Ønsket volumen &gt;500&nbsp;ml ved 1-stadie PBR med implantat: DBCG frar\u00e5der dette \u2014 overvej ekspander/2-stadie (s\u00f8g i ekspander/Becker ovenfor).');
     }
     $('notesContainer').innerHTML = notes.map(function(n){ return '<div class="note">' + n + '</div>'; }).join('');
+  }
+
+  // ---- AK-markeringsark (Hedén/Akademikliniken): printbar operationsplanlægning ----
+  function printAkSheet(item){
+    var w = Bryst.widthOf(item);
+    var h = item.height_cm != null ? item.height_cm : w; // rund: højde = diameter
+    var proj = item.projection_cm || item.nominal_projection_cm;
+    var distalShare = item.shape === 'anatomical' ? 0.5 : 0.55;
+    var halfH = h * distalShare;
+    var hd = Bryst.hedenAssess(item, state.nimf, state.gland);
+    var lvc = Bryst.lvcOf(item);
+    var today = new Date().toLocaleDateString('da-DK');
+    var win = window.open('', '_blank');
+    if (!win) return;
+    var html = '<!DOCTYPE html><html lang="da"><head><meta charset="utf-8"><title>AK-markeringsark</title><style>' +
+      '*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}' +
+      'body{font-family:-apple-system,"Segoe UI",Arial,sans-serif;color:#22262A;max-width:660px;margin:0 auto;padding:46px 36px 60px;line-height:1.6;font-size:14px;}' +
+      '.eyebrow{font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#A33B2B;margin-bottom:6px;}' +
+      'h1{font-size:22px;margin:0 0 4px;font-weight:600;}' +
+      '.sub{color:#6B7076;font-size:12.5px;margin-bottom:22px;}' +
+      '.rule{height:2px;background:#A33B2B;width:56px;margin-bottom:24px;}' +
+      'table{border-collapse:collapse;width:100%;margin-bottom:26px;font-size:13px;}' +
+      'td,th{border:1px solid #D8DCDF;padding:7px 10px;text-align:left;}' +
+      'th{background:#F2F4F5;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#555B61;}' +
+      'td b{font-family:ui-monospace,Menlo,monospace;}' +
+      'h2{font-size:15px;margin:26px 0 8px;font-weight:600;}' +
+      'ol{margin:0;padding-left:20px;} li{margin-bottom:9px;}' +
+      '.val{font-family:ui-monospace,Menlo,monospace;font-weight:600;color:#A33B2B;white-space:nowrap;}' +
+      '.note{font-size:11.5px;color:#6B7076;font-style:italic;margin-top:6px;}' +
+      '.footer{font-size:10.5px;color:#9AA0A6;margin-top:36px;border-top:1px solid #D8DCDF;padding-top:14px;line-height:1.6;}' +
+      '@media print{ body{padding:20px 8px;} }' +
+      '</style></head><body>' +
+      '<div class="eyebrow">Bryst · Modul 1 · Operationsplanlægning</div>' +
+      '<h1>AK-markeringsark (Hedén/Akademikliniken)</h1>' +
+      '<div class="sub">Genereret ' + today + ' — ingen patientidentifikatorer. Alle afledte mål er geometriske estimater; verificér klinisk.</div>' +
+      '<div class="rule"></div>' +
+      '<table><tr><th>Implantat</th><th>Katalog#</th><th>Vol</th><th>Ø/B</th><th>Højde</th><th>Proj</th><th>LVC (est.)</th></tr>' +
+      '<tr><td>' + Bryst.profileLabel(item) + (Bryst.textureLabel(item) ? ', ' + Bryst.textureLabel(item) : '') + '</td>' +
+      '<td><b>' + Bryst.catalogLabel(item) + '</b></td>' +
+      '<td><b>' + Bryst.volumeOf(item) + ' cc</b></td>' +
+      '<td><b>' + (w != null ? w.toFixed(1) + ' cm' : '—') + '</b></td>' +
+      '<td><b>' + (item.height_cm != null ? item.height_cm.toFixed(1) + ' cm' : '(= Ø)') + '</b></td>' +
+      '<td><b>' + (proj != null ? proj.toFixed(1) + ' cm' : '—') + '</b></td>' +
+      '<td><b>' + (lvc != null ? '≈ ' + lvc.toFixed(1) + ' cm' : '—') + '</b></td></tr></table>' +
+
+      '<h2>A · Primær augmentation (implantat tilpasses papillen)</h2>' +
+      '<ol>' +
+      '<li><b>NS-linjen:</b> arme eleveret 45° (hænder på hovedet) — overfør papilpositionen vandret til sternums midtlinje. NS-linjen forudsiger postoperativ papilposition og angiver samtidig øvre grænse for muskeldeling ved dual-plane (del altid distalt for linjen).</li>' +
+      '<li><b>ILP-linjen:</b> mål <span class="val">' + halfH.toFixed(1) + ' cm</span> (' + Math.round(distalShare * 100) + ' % af implantathøjden' + (item.shape === 'anatomical' ? '' : '; rund: 55 %') + ') distalt fra NS-linjen langs midtlinjen; træk vandret linje lateralt = implantatets nedre pol.</li>' +
+      '<li><b>Hudbehov i nedre pol:</b> ideal papil→IMF (maksimalt strakt) = LVC + kirtel-pinch/2 = <span class="val">' + (lvc != null ? lvc.toFixed(1) : '—') + ' + ' + (state.gland / 2).toFixed(1) + ' ≈ ' + (hd ? hd.needed.toFixed(1) : '—') + ' cm</span>. Markér med maksimalt strakt hud.</li>' +
+      '<li><b>Vurdering her:</b> målt papil→IMF (strakt) <span class="val">' + state.nimf.toFixed(1) + ' cm</span> → ' + (hd ? hd.label : '—') + '.</li>' +
+      '<li>Ligger idealmålet ≤ 2 cm over ILP-linjen: incision ved idealmålet, dissektion distalt forbi ILP-linjen, folden resutureres på ILP-linjen (Scarpas fascie → thoraxfascien).</li>' +
+      '</ol>' +
+
+      '<h2>B · Mastopexy-augmentation (papillen tilpasses implantatet — omvendt planlægning)</h2>' +
+      '<ol>' +
+      '<li><b>Udgangspunkt:</b> eksisterende submammærfure = implantatets nedre pol (IMF = ILP). Forlæng furen til midtlinjen; korrigér evt. sideforskel i folde-højde (sænk/hæv ½ cm til samme niveau).</li>' +
+      '<li><b>Ny papilposition:</b> mål <span class="val">' + halfH.toFixed(1) + ' cm</span> proksimalt fra IMF-linjen i midtlinjen (arme hængende); forlæng derfra vandret lateralt <b>med armene eleveret 45°</b> — skæringen med brystmeridianen = ny papilposition. Kontrollér mod sternal notch-afstand, midtlinje-afstand og symmetri.</li>' +
+      '<li><b>Hud mellem areola og fold:</b> (LVC + kirtel-pinch/2) − halv areoladiameter ≈ <span class="val">' + (hd ? hd.needed.toFixed(1) : '—') + ' − 2,0 ≈ ' + (hd ? (hd.needed - 2).toFixed(1) : '—') + ' cm</span> (ved 4 cm areola). Styrer valget: periareolær / vertikal / inverteret-T.</li>' +
+      '<li><b>Rækkefølge (to tempi i én seance):</b> implantatet lægges FØRST (via fold-incision + én vertikal søjle, ingen hudresektion endnu) → patienten sættes op → markeringer revurderes → papil flyttes → vertikal hudresektion → lille fold-excision, ingen spænding i T-krydset.</li>' +
+      '<li><b>Ved 2-seance-plan:</b> stadie 1 (løftet) SKAL planlægges efter det implantat, der vælges i stadie 2 — afstanden papil→fold dimensioneres efter dets LVC (klassisk faldgrube, Hedén).</li>' +
+      '</ol>' +
+      '<div class="note">Mål lagt til grund: brystbredde ' + state.width.toFixed(1) + ' cm · SPP ' + state.spp + ' mm · IPP ' + state.ipp + ' mm · papil→IMF (strakt) ' + state.nimf.toFixed(1) + ' cm · kirtel-pinch ' + state.gland.toFixed(1) + ' cm.</div>' +
+      '<div class="footer">LVC (lower ventral curvature) er ikke opgivet af Mentor og er her estimeret geometrisk (kvart-ellipsebue af højde-andel × projektion) — Hedéns publicerede LVC-værdier gælder Allergan-implantater. Kilder: Hedén P, Mastopexy Augmentation with Form Stable Breast Implants, Clin Plast Surg 2009;36:91–104; Hedén, SFEP 2013. Filtrering, ikke anbefaling — endeligt implantat afgøres peroperativt med sizer.</div>' +
+      '</body></html>';
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    setTimeout(function(){ win.print(); }, 250);
   }
 
   // ---- Retur-bjælke, når Modul 1 er åbnet fra et patientmodul (#modul1?fra=modul2/3) ----
@@ -1908,6 +2189,7 @@ window.Bryst = (function(){
   Bryst.onReset(function(){
     state.context = 'augmentation'; state.expanderSearch = false;
     state.width = 12.5; state.height = 11.5; state.spp = 24; state.ipp = 10; state.vol = 320;
+    state.nimf = 9.5; state.gland = 3;
     state.texture = 'any'; state.shape = 'any';
     setToggle('ctxToggle', 'augmentation');
     setToggle('textureToggle', 'any');
@@ -1919,6 +2201,8 @@ window.Bryst = (function(){
     setSlider('spp', 'sppVal', 24, 0);
     setSlider('ipp', 'ippVal', 10, 0);
     setSlider('vol', 'volVal', 320, 0);
+    setSlider('nimf', 'nimfVal', 9.5, 1);
+    setSlider('gland', 'glandVal', 3, 1);
     render();
   });
 
@@ -1941,7 +2225,7 @@ window.Bryst = (function(){
     return '<svg class="m3-silhouette" viewBox="0 0 90 76"><path d="' + SILHOUETTES[key] + '"/></svg>';
   }
 
-  var state = { changeAmount: 'moderate', ptosis: 0, bmi: 22, selected: {}, pickInclude: {} };
+  var state = { changeAmount: 'moderate', ptosis: 0, asym: 'no', bmi: 22, selected: {}, pickInclude: {} };
 
   function $(id){ return document.getElementById(id); }
 
@@ -1957,16 +2241,22 @@ window.Bryst = (function(){
   }
   wireChoiceRow('m3ChangeAmount', 'changeAmount');
   wireChoiceRow('m3Ptosis', 'ptosis', function(v){ return parseInt(v, 10); });
+  wireChoiceRow('m3Asym', 'asym');
   $('m3Bmi').addEventListener('input', function(e){ state.bmi = parseFloat(e.target.value) || 0; });
 
   function evaluateModalities(s){
     var mods = [];
 
+    var asymNote = s.asym === 'yes' ? 'Ved sideforskel kan forskellig implantatstørrelse pr. side — eller samtidig justering (løft/reduktion) af den ene side — udligne asymmetrien. Drøftes konkret.' : null;
+
     // Implantat — altid en gyldig mulighed for en rask patient (Modul 3 forudsætter rask patient)
+    var implantNotes = ['Endeligt implantat afgøres i Modul 1 (lægemodul) ved konsultationen.',
+        'Afprøv volumen hjemme med »ris-testen«: ris i en nylonstrømpe i bh\'en — 1 dl ris svarer til ca. 100 cc.'];
+    if (s.ptosis === 1) implantNotes.push('Ved let nedhæng kan et korrekt placeret implantat i sig selv løfte papillen — et hudoverskud på op til ca. 2 cm kan korrigeres med implantat alene (Hedén). Vurderes præcist pr. implantat i lægemodulet.');
+    if (asymNote) implantNotes.push(asymNote);
     mods.push({
       key: 'implant', name: 'Implantat', silhouette: 'implant', viable: true, implantRelated: true,
-      notes: ['Endeligt implantat afgøres i Modul 1 (lægemodul) ved konsultationen.',
-        'Afprøv volumen hjemme med »ris-testen«: ris i en nylonstrømpe i bh\'en — 1 dl ris svarer til ca. 100 cc.'],
+      notes: implantNotes,
       pros: ['Forudsigelig, kontrollerbar størrelse og form', 'Effekt varer ved uden gentagne seancer'],
       cons: ['Kapseldannelse og evt. reoperation over tid (litteratur angiver ca. 10–25%)', 'Kan opleves som fremmedlegeme', 'Alene ofte utilstrækkeligt ved udtalt nedhæng (grad II–III)']
     });
@@ -1991,11 +2281,22 @@ window.Bryst = (function(){
     // Løft alene
     var liftViable = s.ptosis >= 1;
     var liftReason = liftViable ? null : 'Løft alene korrigerer nedhæng — der er ikke angivet nedhæng her, og løft tilføjer ikke volumen.';
+    var TECH_BY_GRADE = {
+      1: 'Ved let nedhæng (grad I): periareolær teknik kan bruges til små justeringer, men den flader brystet og udvider areolaen ved større løft — ofte overvurderet som løsning (Hedén).',
+      2: 'Ved moderat nedhæng (grad II): vertikal teknik giver god projektion med begrænset ar.',
+      3: 'Ved udtalt nedhæng (grad III): inverteret-T (ankersnit) er oftest nødvendig — korrekt planlagt bliver arret i folden det mindst synlige af arrene (Hedén).'
+    };
+    var liftNotes = [];
+    if (liftViable){
+      liftNotes.push('Korrigerer position, men ændrer ikke volumen — kombinér med implantat eller fedt for også at opnå ønsket størrelse.');
+      liftNotes.push(TECH_BY_GRADE[s.ptosis]);
+      liftNotes.push('Fylden i øvre pol, som et løft giver, aftager typisk i løbet af de første ~6 måneder — varig øvre polfylde kræver som regel implantat (Hedén).');
+    }
     mods.push({
       key: 'lift', name: 'Løft (mastopexi)', silhouette: 'lift', viable: liftViable, reason: liftReason,
-      notes: liftViable ? ['Korrigerer position, men ændrer ikke volumen — kombinér med implantat eller fedt for også at opnå ønsket størrelse.'] : [],
+      notes: liftNotes,
       pros: ['Korrigerer nedhæng og løfter brystvorte-position', 'Kan forbedre form uden fremmedlegeme'],
-      cons: ['Tilføjer ikke volumen alene', 'Efterlader ar (omfanget afhænger af teknik og grad af nedhæng)']
+      cons: ['Tilføjer ikke volumen alene', 'Efterlader ar (omfanget afhænger af teknik og grad af nedhæng)', 'Fylden i øvre pol aftager typisk over ~6 måneder']
     });
 
     // Kombination
@@ -2006,9 +2307,11 @@ window.Bryst = (function(){
     var comboNotes = [];
     if (comboViable){
       comboNotes.push('Samlet komplikationsrate for kombinationsprocedurer er højere end for hver procedure isoleret (studier angiver ca. 13%), med revisionsrater 8,7–23,2%.');
+      comboNotes.push('Ét-stadie kombination kræver præcis planlægning: løftet dimensioneres efter det valgte implantats mål (Hedéns AK-metode — papilposition og hudmængde beregnes af implantatets højde og LVC). Implantatet lægges på plads, før der fjernes hud. Beregning og markeringsark findes i lægemodulet.');
       if (s.ptosis === 3){
-        comboNotes.push('Ved udtalt nedhæng (grad III / stort "vertikalt overskud") overvejes ofte 2 seancer i stedet for kombination i én seance.');
+        comboNotes.push('Ved udtalt nedhæng (grad III / stort "vertikalt overskud") overvejes ofte 2 seancer i stedet for kombination i én seance. Vigtigt ved 2 seancer: løftet (1. seance) skal planlægges efter det implantat, der vælges senere — ellers bliver afstanden papil→fold for kort (klassisk faldgrube, Hedén).');
       }
+      if (asymNote) comboNotes.push(asymNote);
     }
     mods.push({
       key: 'combo', name: 'Kombination', silhouette: 'combo', viable: comboViable, reason: comboReason, implantRelated: true,
@@ -2143,7 +2446,7 @@ window.Bryst = (function(){
       '<div class="meta-box">' +
         '<div>Genereret ' + today + ' — ingen patientidentifikatorer på denne side.</div>' +
         '<div>Patienten kan selv skrive navn her: ______________________</div>' +
-        '<div style="margin-top:6px;"><b>Lagt til grund:</b> ønsket ændring: ' + changeLabel + ' · nedhæng: ' + ptosisLabel + ' · BMI: ' + s.bmi + '</div>' +
+        '<div style="margin-top:6px;"><b>Lagt til grund:</b> ønsket ændring: ' + changeLabel + ' · nedhæng: ' + ptosisLabel + ' · sideforskel: ' + (s.asym === 'yes' ? 'ja' : 'nej') + ' · BMI: ' + s.bmi + '</div>' +
       '</div>' +
       mods.map(function(m){
         return '<div class="col"><h2>' + m.name + '</h2>' +
@@ -2170,7 +2473,7 @@ window.Bryst = (function(){
         '<div class="note">Medtaget for at dokumentere, at valget er truffet på et fuldt oplyst grundlag.</div></div>'
         : '') +
       '<div class="footer">Ingen af mulighederne ovenfor er rangeret eller anbefalet af værktøjet — lægen har superviseret og suppleret mundtligt. ' +
-      'Denne oversigt supplerer men erstatter ikke journalført informeret samtykke. Datagrundlag: Mentor Product Guide 2023; plastikkirurgisk litteratur om augmentation, fedtoverførsel, mastopexi og kombinationsprocedurer.</div>' +
+      'Denne oversigt supplerer men erstatter ikke journalført informeret samtykke. Datagrundlag: Mentor Product Guide 2023; Hedén, Clin Plast Surg 2009 (mastopexy-augmentation/AK-metoden); plastikkirurgisk litteratur om augmentation, fedtoverførsel, mastopexi og kombinationsprocedurer.</div>' +
       '</body></html>';
     win.document.write(html);
     win.document.close();
@@ -2184,10 +2487,11 @@ window.Bryst = (function(){
   }
   Bryst.wireNyPatient('m3NyPatient');
   Bryst.onReset(function(){
-    state.changeAmount = 'moderate'; state.ptosis = 0; state.bmi = 22;
+    state.changeAmount = 'moderate'; state.ptosis = 0; state.asym = 'no'; state.bmi = 22;
     state.selected = {}; state.pickInclude = {};
     setRow('m3ChangeAmount', 'moderate');
     setRow('m3Ptosis', '0');
+    setRow('m3Asym', 'no');
     $('m3Bmi').value = 22;
     showView('intake');
   });
@@ -2212,9 +2516,11 @@ window.Bryst = (function(){
   }
 
   var state = {
+    surgery: 'mastectomy', bctFraction: 'small', bctTiming: 'immediate',
     radiation: 'none', scar: 'none', smoking: 'no',
     bmi: 24, age: 50, vol: 350,
     comorbid: false, immune: false, connective: false, bilateral: false,
+    footprint: 'na', conus: 'na', envelope: 'na',
     expert: true,
     selected: {},
     pickInclude: {}
@@ -2222,19 +2528,29 @@ window.Bryst = (function(){
 
   function $(id){ return document.getElementById(id); }
 
-  function wireChoiceRow(id, key){
+  function wireChoiceRow(id, key, onchange){
     var row = $(id);
     row.querySelectorAll('.m2-choice').forEach(function(el){
       el.addEventListener('click', function(){
         row.querySelectorAll('.m2-choice').forEach(function(e){ e.classList.remove('active'); });
         el.classList.add('active');
         state[key] = el.dataset.val;
+        if (onchange) onchange();
       });
     });
   }
+  wireChoiceRow('m2Surgery', 'surgery', function(){
+    $('m2BctFields').style.display = state.surgery === 'bct' ? 'block' : 'none';
+    state.selected = {}; // mulighederne skifter helt mellem de to forløb
+  });
+  wireChoiceRow('m2BctFraction', 'bctFraction');
+  wireChoiceRow('m2BctTiming', 'bctTiming');
   wireChoiceRow('m2Radiation', 'radiation');
   wireChoiceRow('m2Scar', 'scar');
   wireChoiceRow('m2Smoking', 'smoking');
+  wireChoiceRow('m2Footprint', 'footprint');
+  wireChoiceRow('m2Conus', 'conus');
+  wireChoiceRow('m2Envelope', 'envelope');
   $('m2Bmi').addEventListener('input', function(e){ state.bmi = parseFloat(e.target.value) || 0; });
   $('m2Age').addEventListener('input', function(e){ state.age = parseFloat(e.target.value) || 0; });
   $('m2Vol').addEventListener('input', function(e){ state.vol = parseFloat(e.target.value) || 0; });
@@ -2255,6 +2571,95 @@ window.Bryst = (function(){
   }
 
   function evaluateReconstruction(s){
+    return s.surgery === 'bct' ? evaluateBct(s) : evaluateMastectomy(s);
+  }
+
+  // ---- Symmetrisering af modsatte bryst — fælles kort for begge forløb ----
+  function symmetryCard(s, bct){
+    var notes = [];
+    if (bct){
+      notes.push('Kan være hele løsningen: har det opererede bryst en acceptabel form, men er mindre, kan modsidig reduktion/mastopexi alene genskabe symmetrien — særligt værdifuldt når strålebeskadiget hud gør indgreb på det behandlede bryst risikabelt (Blondeel III).');
+    } else {
+      notes.push('Reduktion, mastopexi eller augmentation af det modsatte bryst udføres typisk ved 2. seance (~6 mdr), når det rekonstruerede bryst har sat sig — symmetri er slutmålet for forløbet (Blondeel II).');
+    }
+    return {
+      key: 'symmetry', name: 'Symmetrisering af modsatte bryst', silhouette: 'autolog',
+      viable: !s.bilateral, implantRelated: true,
+      reason: s.bilateral ? 'Bilateralt forløb — der er ikke et modsidigt bryst at symmetrisere mod (symmetrien ligger i selve rekonstruktionen af begge sider).' : null,
+      notes: notes,
+      pros: ['Symmetri i volumen og form er ofte vigtigere for det samlede resultat end perfekt form af det enkelte bryst', 'Kan undgå (yderligere) kirurgi i strålebeskadiget væv'],
+      cons: ['Indgreb — og ar — på det raske bryst', 'Skal journalføres og aftales som selvstændigt indgreb']
+    };
+  }
+
+  // ---- Brystbevarende forløb (Blondeel III: volumen-algoritmen ⅛ / ⅜) ----
+  function evaluateBct(s){
+    var mods = [];
+    var frac = s.bctFraction;                 // small (<1/8) / medium (1/8–3/8) / large (>3/8)
+    var delayed = s.bctTiming === 'delayed';
+    var rtWaitNote = 'Endelig vurdering og korrektion tidligst 6–12 mdr efter sidste strålebehandling — RT-forandringerne (fibrose, skrumpning) skal stabiliseres først (Blondeel III).';
+
+    // Glandulær remodellering (onkoplastik)
+    var remodelReasons = [];
+    if (frac !== 'small') remodelReasons.push('Ved defekter over ⅛ af kirtlen rækker omlejring af det tilbageværende væv sjældent — der skal tilføjes væv (lap eller lipofilling), jf. Blondeel III.');
+    var remodelNotes = ['Kirtlen omlejres/roteres over defekten med reduktions-/mastopexiteknikker; en mindre reduktion i størrelse må accepteres — evt. med samtidig symmetrisering af modsatte bryst.'];
+    if (delayed && s.radiation !== 'none') remodelNotes.push(rtWaitNote);
+    if (s.radiation === 'prior') remodelNotes.push('Reduktionsteknikker i bestrålet bryst har øget risiko for sårhelingsproblemer og infektion (RT-vaskulitis) — drøftes eksplicit med patienten (Blondeel III).');
+    mods.push({
+      key: 'remodel', name: 'Glandulær remodellering (onkoplastik)', silhouette: 'autolog',
+      viable: remodelReasons.length === 0, reason: remodelReasons[0],
+      notes: remodelNotes,
+      pros: ['Brystets eget væv — ét indgreb, ingen donorsted', 'Defekten lukkes med teknikker kendt fra reduktion/mastopexi'],
+      cons: ['Brystet bliver mindre', 'Kræver at defekten er under ca. ⅛ af kirtlen']
+    });
+
+    // Lokoregional perforator-lap
+    var flapReasons = [];
+    if (frac === 'small') flapReasons.push('Ved små defekter (under ⅛) rækker glandulær remodellering typisk — en lap med donorar er sjældent begrundet (Blondeel III).');
+    if (frac === 'large') flapReasons.push('Ved defekter over ⅜ giver selv en stor regional lap sjældent et tilfredsstillende resultat — se »Mastektomi + total rekonstruktion« (Blondeel III).');
+    var flapNotes = ['Valg efter defektens placering: TDAP/muskelbesparende latissimus (laterale kvadranter), LICAP/AICAP (laterale/nedre-mediale defekter) — små runde implantater i defekten frarådes pga. høj langtidskomplikationsrate (Blondeel III).'];
+    if (!delayed) flapNotes.push('Ved immediat lap før strålebehandling lægges ca. 20 % ekstra volumen — RT skrumper lappen. Blondeel-forbeholdet ved ⅛–⅜: positive marginer og uforudsigelig RT-effekt kan »brænde broer« — det kan være klogere at udskyde den endelige rekonstruktion til ~6 mdr efter RT (midlertidig løsning accepteres).');
+    if (delayed && s.radiation !== 'none') flapNotes.push(rtWaitNote);
+    mods.push({
+      key: 'locoflap', name: 'Lokoregional lap (TDAP / LICAP / AICAP)', silhouette: 'combo',
+      viable: flapReasons.length === 0, reason: flapReasons[0],
+      notes: flapNotes,
+      pros: ['Tilfører både volumen og (ved behov) hud', 'Bevarer brystet — velegnet til defekter på ⅛–⅜ af kirtlen'],
+      cons: ['Donorar på ryg/flanke', 'Immediat lap kan sidenhen skades af strålebehandlingen (sklerose, skrumpning)']
+    });
+
+    // Lipofilling
+    var lipoReasons = [];
+    if (frac === 'large') lipoReasons.push('Lipofilling kan ikke erstatte over ⅜ af kirtlen — volumenbehovet er for stort til fedttransplantation alene.');
+    var lipoNotes = ['Typisk 2–3 (eller flere) seancer med måneders mellemrum; en del af volumen resorberes pr. seance.',
+      'Forbedrer samtidig bestrålet huds kvalitet og eftergivelighed (Rigotti — adipøse stamceller); kan løsne og strække en stram kuvert.',
+      'Tilfører ikke hud — ved egentlig huddefekt kræves fortsat en lap.'];
+    if (delayed && s.radiation !== 'none') lipoNotes.push(rtWaitNote);
+    mods.push({
+      key: 'lipo', name: 'Lipofilling (fedttransplantation)', silhouette: 'expander',
+      viable: lipoReasons.length === 0, reason: lipoReasons[0],
+      notes: lipoNotes,
+      pros: ['Mindst invasive mulighed — kan udføres i lokalbedøvelse/dagkirurgi', 'Behandler både volumendefekt og strålebeskadiget hud'],
+      cons: ['Flere seancer er reglen, ikke undtagelsen', 'Volumenretention varierer; slutresultatet kommer gradvist']
+    });
+
+    // Mastektomi + total rekonstruktion
+    var totalReasons = [];
+    if (frac !== 'large') totalReasons.push('Ved defekter under ⅜ er brystbevarende korrektion oftest mulig — total rekonstruktion er ikke nødvendig her (Blondeel III).');
+    mods.push({
+      key: 'total', name: 'Mastektomi + total rekonstruktion', silhouette: 'implant',
+      viable: totalReasons.length === 0, reason: totalReasons[0],
+      notes: ['Skin-sparing mastektomi med primær autolog rekonstruktion har i sammenlignende data vist bedre langtidskosmetik end brystbevarende operation + strålebehandling (Cocquyt 2003; Blondeel III). Gentagne indgreb i samme bryst og defekter i øvre-mediale kvadrant trækker samme vej.',
+        'Skift »Udgangspunkt« til mastektomi i trin 1 for at gennemgå de fire rekonstruktionsveje i detaljer.'],
+      pros: ['Undgår (yderligere) strålebehandlet restkirtel som kosmetisk problem', 'Én samlet, planlagt rekonstruktion frem for gentagne korrektioner'],
+      cons: ['Større og mere definitivt indgreb', 'Rekonstruktionsforløb i flere etaper (se tidslinjen i sammenligningen)']
+    });
+
+    mods.push(symmetryCard(s, true));
+    return mods;
+  }
+
+  function evaluateMastectomy(s){
     var relCount = countRelativeContraindications(s);
     var mods = [];
 
@@ -2354,8 +2759,19 @@ window.Bryst = (function(){
         pros: ['Alternativt donorsted når bugvæv ikke kan bruges', 'PAP skåner muskel og har lettere tilgængelige kar'],
         cons: ['Mindre donorvolumen end bugvæv typisk', 'Ar på lår/sæde']
       });
+
+      var sgapReasons = [];
+      if (s.immune) sgapReasons.push('Immunsuppression: også større lap-rekonstruktion er kontraindiceret (DBCG grundlag).');
+      mods.push({
+        key:'sgap', name:'SGAP/IGAP-lap (sæde)', silhouette:'autolog', viable: sgapReasons.length === 0,
+        reason: sgapReasons[0],
+        notes: ['Vælges typisk kun når bugvæggen ikke kan bruges (Blondeel II): lappen er fastere og sværere at forme, og hudøen er lille — bedst ved primær rekonstruktion, hvor det meste af hudkuverten er bevaret. Ved bilateral rekonstruktion ofte i to seancer med 3–6 mdr interval.'],
+        pros: ['Rigeligt volumen selv hos slanke', 'Alternativ når hverken bugvæg eller ryg er velegnet'],
+        cons: ['Fastere væv — vanskeligere at forme end bugvæv; hyppigere behov for sekundær korrektion (redrapering/lipofilling)', 'Ar på sædet; lille hudø']
+      });
     }
 
+    mods.push(symmetryCard(s, false));
     return mods;
   }
 
@@ -2368,7 +2784,38 @@ window.Bryst = (function(){
     $('m2StepLabel').innerHTML = 'Trin <b>' + stepNum + '</b> af 3 · ' + stepText;
   }
 
+  var BLONDEEL_LABELS = {
+    footprint: {intact:'intakt', deformed:'deformeret', missing:'mangler'},
+    conus: {intact:'intakt', partial:'delvis defekt', missing:'mangler'},
+    envelope: {ok:'tilstrækkelig og elastisk', tight:'stram/RT-beskadiget', missing:'hud mangler'}
+  };
+  function blondeelSummaryParts(s){
+    if (s.footprint === 'na' && s.conus === 'na' && s.envelope === 'na') return null;
+    var status = [];
+    if (s.footprint !== 'na') status.push('footprint: ' + BLONDEEL_LABELS.footprint[s.footprint]);
+    if (s.conus !== 'na') status.push('konus: ' + BLONDEEL_LABELS.conus[s.conus]);
+    if (s.envelope !== 'na') status.push('hudkuvert: ' + BLONDEEL_LABELS.envelope[s.envelope]);
+    var derived = [];
+    if (s.footprint === 'deformed' || s.footprint === 'missing') derived.push('footprint retableres først — grænserne (submammærfure, lateral kant, øvre kant) markeres og genskabes, før konus lægges på (Blondeel: en æstetisk konus er umulig uden korrekt footprint)');
+    if (s.conus === 'missing') derived.push('hele konus skal erstattes (implantat og/eller lap)');
+    if (s.conus === 'partial') derived.push('konus suppleres lokalt (glandulær omlejring, lap eller lipofilling) dér hvor volumen mangler');
+    if (s.envelope === 'tight') derived.push('stram/beskadiget kuvert: overvej ekspansion, lap-hudø eller lipofilling (forbedrer RT-hud) før eller sammen med volumenopbygningen');
+    if (s.envelope === 'missing') derived.push('manglende hud skal tilføres med lap-hudø eller gradvis ekspansion');
+    return { status: status, derived: derived };
+  }
+
   function renderOverview(){
+    var bct = state.surgery === 'bct';
+    $('m2OverviewH1').textContent = bct ? 'Veje efter brystbevarende operation' : 'Veje til rekonstruktion';
+    $('m2OverviewIntro').textContent = bct
+      ? 'Teknikvalget styres af hvor stor en del af kirtlen der mangler (Blondeel III: grænserne ⅛ og ⅜). Alle muligheder vises — også dem der passer mindre godt her, med begrundelse.'
+      : 'Der findes ingen evidens for, at én rekonstruktionstype er mere anbefalelsesværdig end en anden (DBCG). Alle muligheder vises — også dem der passer mindre godt her, med begrundelse.';
+    $('m2ExpertLine').style.display = bct ? 'none' : 'flex';
+    var bs = blondeelSummaryParts(state);
+    $('m2BlondeelSummary').innerHTML = bs
+      ? '<div class="m2-blondeel-summary"><b>Blondeel 3-trins-analyse:</b> ' + bs.status.join(' · ') +
+        (bs.derived.length ? '<br>Afledt strategi: ' + bs.derived.join('; ') + '.' : '') + '</div>'
+      : '';
     var mods = evaluateReconstruction(state);
     $('m2Options').innerHTML = mods.map(function(m){
       var picked = !!state.selected[m.key];
@@ -2409,7 +2856,50 @@ window.Bryst = (function(){
         '</div>';
       }).join('');
     }
+    renderTimeline();
     renderPicks();
+  }
+
+  // ---- Forløbstidslinje (Blondeel II: resultatet bygges i etaper) ----
+  function timelineSteps(s, selectedKeys){
+    var has = function(){ for (var i = 0; i < arguments.length; i++){ if (selectedKeys.indexOf(arguments[i]) > -1) return true; } return false; };
+    var steps = [];
+    if (s.surgery === 'bct'){
+      if (!has('remodel','locoflap','lipo','total','symmetry')) return null;
+      steps.push({t:'Kræftoperationen', d: s.bctTiming === 'immediate' ? 'Defekten håndteres samtidig (onkoplastik/lap) — svar på marginer afventes.' : 'Brystbevarende operation; korrektion planlægges som senere, selvstændigt forløb.'});
+      if (s.radiation !== 'none') steps.push({t:'Strålebehandling', d:'RT-forandringer (hævelse, fibrose, skrumpning) udvikler sig i måneder efter afsluttet behandling.'});
+      steps.push({t:'6–12 måneder', d:'Formen stabiliseres — først nu kan slutresultatet vurderes og en evt. korrektion planlægges endeligt (Blondeel III).'});
+      steps.push({t:'Korrektion', d:'Remodellering, lap eller lipofilling efter defektens størrelse — lipofilling typisk over 2–3+ seancer.'});
+      if (has('symmetry')) steps.push({t:'Symmetrisering', d:'Evt. tilpasning af modsatte bryst, når det behandlede bryst har fundet sin form.'});
+      return steps;
+    }
+    var flapKeys = ['autolog','diep','ld','paptug','sgap','combo'];
+    var hasFlap = has.apply(null, flapKeys);
+    var hasExp = has('expander');
+    if (!hasFlap && !hasExp && !has('implant','symmetry')) return null;
+    steps.push({t:'Operation 1', d: hasFlap
+      ? 'Grundformen skabes. Ved eget væv lægges brystet bevidst 5–10 % større end målet (15–20 % hvis strålebehandling er usikker) — overskud er let at fjerne senere, mangel er svær at tilføje (Blondeel II).'
+      : hasExp
+        ? 'Ekspander lægges under huden/musklen som pladsholder.'
+        : 'Implantatet lægges — grundformen skabes.'});
+    if (hasExp) steps.push({t:'Uger–måneder', d:'Ekspanderen fyldes gradvist ved ambulante besøg, til hudkuverten har den ønskede størrelse.'});
+    steps.push({t:'~6 måneder', d:'Formen sætter sig: tyngdekraften giver naturligt fald, hævelse (og evt. RT-reaktion) aftager.'});
+    steps.push({t:'Operation 2', d: (hasExp && !hasFlap ? 'Ekspander skiftes til det blivende implantat. ' : '') + 'Justering og symmetri: mindre korrektioner (direkte excision/fedtsugning, lipofilling, ar-revision), evt. symmetrisering af modsatte bryst, papil-rekonstruktion. Små »nip-tuck«-korrektioner kan gentages i lokalbedøvelse, til symmetrien sidder (Blondeel II).'});
+    steps.push({t:'+3 måneder', d:'Areola-tatovering som sidste trin — bilateral tatovering giver det mest naturlige resultat; farven falmer langsomt og kan gentages.'});
+    return steps;
+  }
+
+  function renderTimeline(){
+    var selectedKeys = Object.keys(state.selected).filter(function(k){ return state.selected[k]; });
+    var steps = timelineSteps(state, selectedKeys);
+    var note = state.surgery === 'bct'
+      ? 'Resultatet kommer i etaper — strålereaktionen skal stabiliseres, før formen kan bedømmes endeligt (Blondeel III).'
+      : 'Resultatet er ikke færdigt efter én operation — forløbet er bevidst designet i etaper (Blondeel II). Papillen rekonstrueres aldrig samtidig med lappen (høj risiko for venøs stase i »lap på lap«).';
+    $('m2Timeline').innerHTML = steps
+      ? '<div class="m2-timeline"><div class="m2-timeline-head">Sådan ser forløbet typisk ud</div>' +
+        steps.map(function(st){ return '<div class="m2-tl-step"><div class="m2-tl-t">' + st.t + '</div><div class="m2-tl-d">' + st.d + '</div></div>'; }).join('') +
+        '<div class="m2-tl-note">' + note + '</div></div>'
+      : '';
   }
 
   // Implantater markeret i Modul 1 ("Til patientoversigt") — kan krydses af til PDF'en
@@ -2458,6 +2948,12 @@ window.Bryst = (function(){
     var win = window.open('', '_blank');
     if (!win){ window.print(); return; }
     var radiationLabel = {none:'Ingen', prior:'Tidligere givet', planned:'Planlagt efter operation'}[s.radiation];
+    var surgeryLabel = s.surgery === 'bct'
+      ? 'Brystbevarende operation (' + {small:'defekt under ⅛', medium:'defekt ⅛–⅜', large:'defekt over ⅜'}[s.bctFraction] + ' · ' + (s.bctTiming === 'immediate' ? 'immediat' : 'senere korrektion') + ')'
+      : 'Mastektomi';
+    var bs = blondeelSummaryParts(s);
+    var selectedKeys = Object.keys(s.selected).filter(function(k){ return s.selected[k]; });
+    var tlSteps = timelineSteps(s, selectedKeys);
     var today = new Date().toLocaleDateString('da-DK');
     var html = '<!DOCTYPE html><html lang="da"><head><meta charset="utf-8"><title>Bryst — Rekonstruktionsoversigt</title><style>' +
       '*{box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact;}' +
@@ -2482,7 +2978,8 @@ window.Bryst = (function(){
       '<div class="meta-box">' +
         '<div>Genereret ' + today + ' — ingen patientidentifikatorer på denne side.</div>' +
         '<div>Patienten kan selv skrive navn her: ______________________</div>' +
-        '<div style="margin-top:6px;"><b>Lagt til grund:</b> strålebehandling: ' + radiationLabel + ' · BMI: ' + s.bmi + ' · alder: ' + s.age + ' · ønsket volumen: ' + s.vol + ' cc</div>' +
+        '<div style="margin-top:6px;"><b>Lagt til grund:</b> ' + surgeryLabel + ' · strålebehandling: ' + radiationLabel + ' · BMI: ' + s.bmi + ' · alder: ' + s.age + ' · ønsket volumen: ' + s.vol + ' cc</div>' +
+        (bs ? '<div style="margin-top:4px;"><b>Blondeel 3-trins-analyse:</b> ' + bs.status.join(' · ') + (bs.derived.length ? ' — afledt strategi: ' + bs.derived.join('; ') + '.' : '') + '</div>' : '') +
       '</div>' +
       mods.map(function(m){
         return '<div class="col"><h2>' + m.name + '</h2>' +
@@ -2501,6 +2998,11 @@ window.Bryst = (function(){
         }).join('') + '</ul>' +
         '<div class="note">Endeligt implantat afgøres først ved operationen (med prøveimplantat/sizer).</div></div>'
         : '') +
+      (tlSteps ?
+        '<div class="col"><h2>Forventet forløb</h2><ul>' +
+        tlSteps.map(function(st){ return '<li><b>' + st.t + ':</b> ' + st.d + '</li>'; }).join('') + '</ul>' +
+        '<div class="note">Resultatet bygges i etaper — det er en del af planen, ikke et tegn på at noget er gået galt (Blondeel).</div></div>'
+        : '') +
       ((notChosen.length || notViable.length) ?
         '<div class="col"><h2>Muligheder, der også blev gennemgået</h2>' +
         (notChosen.length ? '<div class="heading">Gennemgået, men fravalgt</div><ul>' + notChosen.map(function(m){ return '<li>' + m.name + '</li>'; }).join('') + '</ul>' : '') +
@@ -2508,7 +3010,7 @@ window.Bryst = (function(){
         '<div class="note">Medtaget for at dokumentere, at valget er truffet på et fuldt oplyst grundlag.</div></div>'
         : '') +
       '<div class="footer">Ingen af mulighederne ovenfor er rangeret eller anbefalet af værktøjet — der findes ingen evidens for, at én rekonstruktionstype er mere anbefalelsesværdig end en anden (DBCG). Lægen har superviseret og suppleret mundtligt. ' +
-      'Denne oversigt supplerer men erstatter ikke journalført informeret samtykke. Datagrundlag: DBCG Kirurgisk behandling af brystkræft v3.1 (godk. 27-11-2024); plastikkirurgisk litteratur om lap-egnethed og komplikationsrisiko.</div>' +
+      'Denne oversigt supplerer men erstatter ikke journalført informeret samtykke. Datagrundlag: DBCG Kirurgisk behandling af brystkræft v3.1 (godk. 27-11-2024); Blondeel et al., PRS 2009 (3-trins-princippet, del I–III); plastikkirurgisk litteratur om lap-egnethed og komplikationsrisiko.</div>' +
       '</body></html>';
     win.document.write(html);
     win.document.close();
@@ -2522,14 +3024,23 @@ window.Bryst = (function(){
   }
   Bryst.wireNyPatient('m2NyPatient');
   Bryst.onReset(function(){
+    state.surgery = 'mastectomy'; state.bctFraction = 'small'; state.bctTiming = 'immediate';
     state.radiation = 'none'; state.scar = 'none'; state.smoking = 'no';
     state.bmi = 24; state.age = 50; state.vol = 350;
     state.comorbid = false; state.immune = false; state.connective = false; state.bilateral = false;
+    state.footprint = 'na'; state.conus = 'na'; state.envelope = 'na';
     state.expert = true;
     state.selected = {}; state.pickInclude = {};
+    setRow('m2Surgery', 'mastectomy');
+    setRow('m2BctFraction', 'small');
+    setRow('m2BctTiming', 'immediate');
+    $('m2BctFields').style.display = 'none';
     setRow('m2Radiation', 'none');
     setRow('m2Scar', 'none');
     setRow('m2Smoking', 'no');
+    setRow('m2Footprint', 'na');
+    setRow('m2Conus', 'na');
+    setRow('m2Envelope', 'na');
     $('m2Bmi').value = 24; $('m2Age').value = 50; $('m2Vol').value = 350;
     $('m2Comorbid').checked = false; $('m2Immune').checked = false;
     $('m2Connective').checked = false; $('m2Bilateral').checked = false;
