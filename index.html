@@ -1133,7 +1133,7 @@
 </header>
 
 <div class="return-bar" id="m1ReturnBar" hidden>
-  <span>Åbnet fra <b id="m1ReturnName">patientmodulet</b> — markér implantater med »Til patientoversigt«, så følger de med til den printbare oversigt.</span>
+  <span>Åbnet fra <b id="m1ReturnName">patientmodulet</b> — markér implantater med »Vælg implantat«, så følger de med til den printbare oversigt.</span>
   <span><span class="num" id="m1PickCount">0</span> valgt · <a href="#" id="m1ReturnLink">← Tilbage til samtalen</a></span>
 </div>
 
@@ -2297,7 +2297,7 @@ window.Bryst = (function(){
           '</div>' +
           '<div class="actions">' +
             '<button class="copy-btn" data-idx="' + i + '">Kopiér journaltekst</button>' +
-            '<button class="pick-btn' + (picked ? ' picked' : '') + '" data-idx="' + i + '">' + (picked ? '✓ På patientoversigt' : '+ Til patientoversigt') + '</button>' +
+            '<button class="pick-btn' + (picked ? ' picked' : '') + '" data-idx="' + i + '">' + (picked ? '✓ Valgt' : '+ Vælg implantat') + '</button>' +
             (state.context === 'augmentation' && !state.expanderSearch ? '<button class="ak-btn" data-idx="' + i + '" title="Printbart markeringsark efter Akademikliniken-metoden (Hedén)">AK-markeringsark</button>' : '') +
             '<span class="match-score">Δ bredde ' + item._widthDelta.toFixed(1) + ' cm' + (item._heightDelta != null ? ' · Δ højde ' + item._heightDelta.toFixed(1) + ' cm' : '') + ' · Δ vol ' + dvTxt + ' cc</span>' +
           '</div>' +
@@ -2577,7 +2577,7 @@ window.Bryst = (function(){
       hint.textContent = 'Højre: ' + Bryst.catalogLabel(r) + ' · Venstre: ' + Bryst.catalogLabel(l) + ' — begge siders mål og verdikter samles på ét ark.';
     } else {
       btn.disabled = true;
-      hint.textContent = 'Markér et implantat "Til patientoversigt" på hver side (højre: ' + (r ? '✓' : 'mangler') + ' · venstre: ' + (l ? '✓' : 'mangler') + ') — så samles begge sider på ét ark her.';
+      hint.textContent = 'Vælg et implantat på hver side (højre: ' + (r ? '✓' : 'mangler') + ' · venstre: ' + (l ? '✓' : 'mangler') + ') — så samles begge sider på ét ark her.';
     }
   }
   $('dualAkBtn').addEventListener('click', printAkSheetDual);
