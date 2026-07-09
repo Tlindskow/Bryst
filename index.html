@@ -688,6 +688,63 @@
   }
   .m2-stamp{ text-align:center; font-family:var(--sans); font-size:10.5px; color:var(--plum-faint); margin-top:8px; }
 
+  /* ---- Diskret evidensgrundlag (litteraturlag) ---- */
+  .ev-trigger{
+    display:inline-flex; align-items:center; gap:6px; margin-top:6px;
+    background:none; border:none; cursor:pointer; padding:2px 0;
+    font-family:var(--sans); font-size:11px; color:var(--plum-faint);
+    letter-spacing:.02em; transition:color .15s ease;
+  }
+  .ev-trigger:hover{ color:var(--dusty-rose-deep); }
+  .ev-trigger:focus-visible{ outline:2px solid var(--dusty-rose-deep); outline-offset:3px; border-radius:2px; }
+  .ev-trigger .ev-i{
+    display:inline-grid; place-items:center; width:15px; height:15px; border-radius:50%;
+    border:1px solid currentColor; font-size:9px; font-style:italic; font-family:var(--serif); line-height:1;
+  }
+  .ev-overlay{
+    position:fixed; inset:0; z-index:120; display:none;
+    background:rgba(46,27,32,.34); backdrop-filter:blur(2px);
+    padding:max(24px,4vh) 18px; overflow-y:auto;
+  }
+  .ev-overlay.open{ display:block; }
+  .ev-sheet{
+    max-width:760px; margin:0 auto; background:var(--cream, #FBF6F2);
+    border:1px solid var(--taupe-line); border-radius:3px;
+    box-shadow:0 22px 60px rgba(46,27,32,.28); padding:34px 40px 40px;
+    animation:evIn .22s ease;
+  }
+  @keyframes evIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+  @media (prefers-reduced-motion:reduce){ .ev-sheet{ animation:none; } }
+  .ev-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:20px; margin-bottom:6px; }
+  .ev-eyebrow{ font-family:var(--sans); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--dusty-rose-deep); margin-bottom:8px; }
+  .ev-sheet h2{ font-family:var(--serif); font-weight:400; font-size:25px; color:var(--plum-ink); margin:0 0 4px; line-height:1.15; }
+  .ev-sub{ font-size:13px; color:var(--plum-soft); margin:0 0 22px; }
+  .ev-close{
+    flex:none; background:none; border:1px solid var(--taupe-line); border-radius:50%;
+    width:34px; height:34px; cursor:pointer; color:var(--plum-soft); font-size:17px; line-height:1;
+    transition:all .15s ease;
+  }
+  .ev-close:hover{ border-color:var(--dusty-rose-deep); color:var(--dusty-rose-deep); }
+  .ev-close:focus-visible{ outline:2px solid var(--dusty-rose-deep); outline-offset:2px; }
+  .ev-sec{ margin-top:28px; }
+  .ev-sec:first-of-type{ margin-top:8px; }
+  .ev-sec > h3{
+    font-family:var(--sans); font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--dusty-rose-deep); margin:0 0 10px; padding-bottom:7px; border-bottom:1px solid var(--taupe-line);
+  }
+  .ev-sec p{ font-size:14px; line-height:1.65; color:var(--plum-ink); margin:0 0 12px; }
+  .ev-sec p .ev-em{ color:var(--dusty-rose-deep); font-weight:600; }
+  .ev-sec ul{ margin:0 0 12px; padding-left:18px; }
+  .ev-sec li{ font-size:14px; line-height:1.6; color:var(--plum-ink); margin-bottom:7px; }
+  .ev-fig{ margin:16px 0 6px; background:#fff; border:1px solid var(--taupe-line); border-radius:3px; padding:18px 18px 12px; }
+  .ev-fig svg{ width:100%; height:auto; display:block; }
+  .ev-figcap{ font-size:11.5px; color:var(--plum-soft); font-style:italic; margin-top:10px; text-align:center; }
+  .ev-cite{
+    margin-top:30px; padding-top:16px; border-top:1px solid var(--taupe-line);
+    font-size:11.5px; line-height:1.7; color:var(--plum-faint);
+  }
+  .ev-cite b{ color:var(--plum-soft); font-weight:600; }
+
   /* ---- Kobling til Modul 1 (implantatvalg) fra patientmodulerne ---- */
   .m2-open-m1{
     display:inline-block; margin-top:10px; font-size:12px; font-family:var(--sans); font-weight:600;
@@ -1426,11 +1483,116 @@
         Denne oversigt supplerer men erstatter ikke journalført informeret samtykke.<br>
         Ingen data gemmes — luk vinduet, og alt er væk.
       </div>
-      <div class="m2-stamp">Datagrundlag: Mentor Product Guide 2023 · plastikkirurgisk litteratur, se kildeliste i PDF</div>
+      <div class="m2-stamp">Datagrundlag: Mentor Product Guide 2023 · plastikkirurgisk litteratur</div>
+      <div style="text-align:center;">
+        <button class="ev-trigger" id="m2EvTrigger" aria-haspopup="dialog"><span class="ev-i">i</span>Evidensgrundlag — hvad litteraturen siger</button>
+      </div>
     </div>
 
   </div>
 </div><!-- /screen-modul2 -->
+
+<!-- ===================== Evidensgrundlag · Modul 2 (augmentation & løft) ===================== -->
+<div class="ev-overlay" id="m2EvOverlay" role="dialog" aria-modal="true" aria-labelledby="m2EvTitle">
+  <div class="ev-sheet">
+    <div class="ev-head">
+      <div>
+        <div class="ev-eyebrow">Evidensgrundlag · Privatmodul</div>
+        <h2 id="m2EvTitle">Ptose, augmentation og løft</h2>
+        <p class="ev-sub">Det litterære grundlag bag modulets vurderinger — til den, der vil dybere ned.</p>
+      </div>
+      <button class="ev-close" id="m2EvClose" aria-label="Luk">✕</button>
+    </div>
+
+    <div class="ev-sec">
+      <h3>Regnault-klassifikationen af ptose</h3>
+      <p>Regnault graderede i 1976 ptose efter papil-areola-kompleksets position i forhold til submammærfuren (IMF) — den enkeltparameter, der afgør, om augmentation alene rækker, eller om et løft er nødvendigt. Graderne defineres af papillens niveau relativt til folden og til brystets nederste (mest deklive) kontur:</p>
+      <ul>
+        <li><span class="ev-em">Grad I (mild):</span> papillen ved foldens niveau — op til ca. 1 cm under.</li>
+        <li><span class="ev-em">Grad II (moderat):</span> papillen 1–3 cm under folden, men stadig over brystets nederste kontur — peger fremad.</li>
+        <li><span class="ev-em">Grad III (svær):</span> papillen mere end 3 cm under folden og ved den nederste kontur — peger nedad.</li>
+        <li><span class="ev-em">Pseudoptose:</span> løs, tømt nedre pol, men papillen står over folden — kræver ikke papilflytning, men fylde/stramning.</li>
+      </ul>
+      <div class="ev-fig">
+        <svg viewBox="0 0 640 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Regnault-graderne på en papil-til-fold-akse">
+          <!-- vandret skala: afstand papil under IMF i cm -->
+          <line x1="80" y1="70" x2="600" y2="70" stroke="#C9B4B8" stroke-width="1.4"/>
+          <!-- IMF-nul -->
+          <line x1="80" y1="52" x2="80" y2="150" stroke="#9C4F60" stroke-width="1.6"/>
+          <text x="80" y="42" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="11" fill="#9C4F60">IMF (0)</text>
+          <!-- zoner -->
+          <rect x="80" y="60" width="120" height="20" fill="#e7dcdd"/>
+          <rect x="200" y="60" width="200" height="20" fill="#ecd3cf"/>
+          <rect x="400" y="60" width="200" height="20" fill="#e4bfb6"/>
+          <!-- tærskler -->
+          <line x1="200" y1="56" x2="200" y2="84" stroke="#9C4F60" stroke-width="1.6"/>
+          <text x="200" y="100" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="11" fill="#9C4F60">1 cm</text>
+          <line x1="400" y1="56" x2="400" y2="84" stroke="#9C4F60" stroke-width="1.6"/>
+          <text x="400" y="100" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="11" fill="#9C4F60">3 cm</text>
+          <!-- papil-markører -->
+          <circle cx="130" cy="70" r="5.5" fill="#9C4F60"/>
+          <circle cx="300" cy="70" r="5.5" fill="#9C4F60"/>
+          <circle cx="500" cy="70" r="5.5" fill="#9C4F60"/>
+          <!-- labels -->
+          <text x="140" y="140" text-anchor="middle" font-family="Iowan Old Style,Palatino,Georgia,serif" font-size="15" fill="#2E1B20">Grad I</text>
+          <text x="140" y="160" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="9.5" fill="#7A5A61">papil ved folden</text>
+          <text x="300" y="140" text-anchor="middle" font-family="Iowan Old Style,Palatino,Georgia,serif" font-size="15" fill="#2E1B20">Grad II</text>
+          <text x="300" y="160" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="9.5" fill="#7A5A61">1–3 cm under · frem</text>
+          <text x="500" y="140" text-anchor="middle" font-family="Iowan Old Style,Palatino,Georgia,serif" font-size="15" fill="#2E1B20">Grad III</text>
+          <text x="500" y="160" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="9.5" fill="#7A5A61">&gt; 3 cm · peger ned</text>
+          <text x="600" y="190" text-anchor="end" font-family="ui-monospace,Menlo,monospace" font-size="10" fill="#A98F92">papillens afstand under submammærfuren →</text>
+        </svg>
+        <div class="ev-figcap">Regnault-graderne aflæst som papillens afstand under folden. Pseudoptose ligger til venstre for nul (papil over IMF).</div>
+      </div>
+    </div>
+
+    <div class="ev-sec">
+      <h3>Hedéns 2-cm-regel: hvornår rækker augmentation alene?</h3>
+      <p>Hedén (Akademikliniken, <i>Clin Plast Surg</i> 2009) viste to ting, der stadig styrer planlægningen: en korrekt udført augmentation <span class="ev-em">eleverer</span> selv papil-areola-komplekset (elevationen kan simuleres præoperativt ved at løfte armene 45° over vandret), og den nødvendige hud i nedre pol kan <span class="ev-em">beregnes</span> frem for at skønnes. Den ideelle afstand fra papil til den nye fold = implantatets <span class="ev-em">LVC</span> (lower ventral curvature — buen fra projektionspunktet ned til implantatets nedre kant) plus et kirtelbidrag (kirtel-pinch/2).</p>
+      <p>Grænsen for augmentation alene er praktisk: ligger den ideelle papil→fold-afstand <span class="ev-em">højst 2 cm</span> over implantatets nedre pol (ILP-linjen), kan ptosen korrigeres uden løft — incisionen lægges ved idealmålet, der dissekeres distalt forbi ILP-linjen, og folden gendannes på ILP-linjen (Scarpas fascie til thoraxvæggen). Overstiger overskuddet 2 cm (op til 3), er mastopexi indiceret. Modulets lægedel beregner dette pr. implantat.</p>
+    </div>
+
+    <div class="ev-sec">
+      <h3>Valg af mastopexi-teknik</h3>
+      <p>Når løft er nødvendigt, styres teknikvalget af, hvor meget hud der er mellem areolaens nedre kant og folden — beregnet som (LVC + kirtel-pinch/2) minus halv areoladiameter. Jo større overskud, jo mere resektion kræves:</p>
+      <div class="ev-fig">
+        <svg viewBox="0 0 640 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mastopexi-teknik efter hudoverskud">
+          <line x1="60" y1="60" x2="600" y2="60" stroke="#C9B4B8" stroke-width="1.4"/>
+          <rect x="60" y="50" width="180" height="20" fill="#e7dcdd"/>
+          <rect x="240" y="50" width="180" height="20" fill="#ecd3cf"/>
+          <rect x="420" y="50" width="180" height="20" fill="#e4bfb6"/>
+          <text x="150" y="42" text-anchor="middle" font-family="Iowan Old Style,Palatino,Georgia,serif" font-size="15" fill="#2E1B20">Periareolær</text>
+          <text x="330" y="42" text-anchor="middle" font-family="Iowan Old Style,Palatino,Georgia,serif" font-size="15" fill="#2E1B20">Vertikal</text>
+          <text x="510" y="42" text-anchor="middle" font-family="Iowan Old Style,Palatino,Georgia,serif" font-size="15" fill="#2E1B20">Inverteret-T</text>
+          <text x="150" y="92" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="10" fill="#7A5A61">mindst overskud</text>
+          <text x="330" y="92" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="10" fill="#7A5A61">moderat</text>
+          <text x="510" y="92" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="10" fill="#7A5A61">størst overskud</text>
+          <text x="60" y="120" font-family="ui-monospace,Menlo,monospace" font-size="10" fill="#A98F92">hudoverskud areola→fold →</text>
+        </svg>
+        <div class="ev-figcap">Stigende hudoverskud → mere omfattende resektion. Inverteret-T er anvendelig i alle grader og har den højeste patienttilfredshed (Hedén); ren periareolær risikerer rynkning af sømmen og fladtrykning af papillen, hvilket en vertikal komponent modvirker.</div>
+      </div>
+    </div>
+
+    <div class="ev-sec">
+      <h3>Kombinationsindgreb — den kritiske rækkefølge</h3>
+      <p>Mastopexi alene mister som regel sin øvre polfylde inden for 6 måneder; kun implantatet holder fylden. Kombinationen er til gengæld mere risikabel end ren augmentation — Hedén reducerede sin egen reoperations-/infektionsrate fra 17 % til 8 % netop ved den beskrevne, målebaserede teknik. To principper er afgørende:</p>
+      <ul>
+        <li><span class="ev-em">Ét indgreb, to tempi:</span> ved ét-seance-kombination lægges implantatet ind <span class="ev-em">før</span> nogen hudresektion. Først derefter re-evalueres optegningerne, og hudresektionen udføres — så lukningen ikke kommer under spænding i T-krydset.</li>
+        <li><span class="ev-em">To-seance-faldgruben:</span> hvis løft og implantat deles på to operationer, skal afstanden papil→ny fold ved første seance dimensioneres efter det implantat, der vælges ved anden seance — ellers bliver afstanden for kort. En klassisk, hyppigt overset fejl.</li>
+      </ul>
+    </div>
+
+    <div class="ev-sec">
+      <h3>Fedtoverførsel som alternativ eller supplement</h3>
+      <p>Autolog fedtoverførsel giver en beskeden, blød volumenforøgelse uden implantat. Vævsretentionen er i gennemsnit omkring <span class="ev-em">54 %</span> med stor spredning i litteraturen (44–83 %), så der injiceres typisk cirka det dobbelte af den ønskede slutvolumen, og flere seancer er reglen snarere end undtagelsen. Egnet ved små ønskede ændringer og som formkorrektion — sjældent tilstrækkeligt alene ved udtalt ptose.</p>
+    </div>
+
+    <div class="ev-cite">
+      <b>Kilder:</b> Regnault P. Breast ptosis: definition and treatment. Clin Plast Surg 1976;3(2):193–203. · Hedén P. Mastopexy Augmentation with Form Stable Breast Implants. Clin Plastic Surg 2009;36:91–104. · Fedtoverførsels-retention: samlet plastikkirurgisk litteratur.<br>
+      Skemaerne er originale, forenklede fremstillinger — ikke gengivelser af figurer fra kilderne. Filtrering og beslutningsstøtte, ikke en klinisk protokol.
+    </div>
+  </div>
+</div>
 
 <div id="screen-katalog" class="screen">
   <div class="k-hero">
@@ -1778,7 +1940,23 @@ window.Bryst = (function(){
     });
   }
 
+  // Diskret evidensgrundlag-overlay: åbnes af triggeren, lukkes af kryds,
+  // baggrundsklik eller Escape. Genbruges af alle moduler (litteraturlaget).
+  function wireEvidence(triggerId, overlayId, closeId){
+    var trigger = document.getElementById(triggerId);
+    var overlay = document.getElementById(overlayId);
+    var close = document.getElementById(closeId);
+    if (!trigger || !overlay || !close) return;
+    function open(){ overlay.classList.add('open'); document.body.style.overflow = 'hidden'; close.focus(); }
+    function shut(){ overlay.classList.remove('open'); document.body.style.overflow = ''; trigger.focus(); }
+    trigger.addEventListener('click', open);
+    close.addEventListener('click', shut);
+    overlay.addEventListener('click', function(e){ if (e.target === overlay) shut(); });
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && overlay.classList.contains('open')) shut(); });
+  }
+
   return {
+    wireEvidence: wireEvidence,
     CATALOG: CATALOG,
     PERMANENT_CATEGORIES: PERMANENT_CATEGORIES,
     EXPANDER_CATEGORIES: EXPANDER_CATEGORIES,
@@ -2745,6 +2923,9 @@ window.Bryst = (function(){
     $('m2Bmi').value = 22;
     showView('intake');
   });
+
+  // ---- Evidensgrundlag-overlay (litteraturlag) ----
+  Bryst.wireEvidence('m2EvTrigger', 'm2EvOverlay', 'm2EvClose');
 
   showView('intake');
 })();
