@@ -447,6 +447,10 @@
   }
   button.ak-btn:hover{ border-color:var(--redline); color:var(--ink); }
   button.ak-btn:focus-visible{ outline:2px solid var(--focus); outline-offset:2px; }
+  button.ak-btn[disabled]{ opacity:.45; cursor:default; }
+  button.ak-btn[disabled]:hover{ border-color:var(--line-strong); color:var(--ink-soft); }
+  #dualAkWrap{ margin-top:10px; }
+  #dualAkWrap .hint{ margin-top:6px; }
 
   .divider{ height:1px; background:var(--line); margin:22px 0; }
 
@@ -1094,6 +1098,10 @@
         <button data-val="left">Venstre</button>
       </div>
       <div class="hint">Ved asymmetri: vælg side — mål, shortlist og valg gemmes pr. side, og implantater markeres med side på patientoversigten.</div>
+      <div id="dualAkWrap" style="display:none;">
+        <button id="dualAkBtn" class="ak-btn" title="Ét markeringsark med begge siders implantat, mål og verdikt — hentes fra patientoversigtens valg pr. side">AK-markeringsark · begge sider</button>
+        <div class="hint" id="dualAkHint"></div>
+      </div>
     </div>
 
     <div class="field">
@@ -2053,6 +2061,7 @@ window.Bryst = (function(){
     var countEl = $('resultCount');
     countEl.textContent = out.results.length;
     $('sideBadge').textContent = state.side === 'same' ? '' : ' · ' + SIDE_LABEL[state.side] + ' side';
+    updateDualAk();
 
     if (out.results.length > 0 && out.volMin != null){
       $('volHint').textContent = 'Shortlisten dækker lige nu ' + Math.round(out.volMin) + '–' + Math.round(out.volMax) + ' cc — nærmeste match både over og under det valgte volumen.';
@@ -2151,18 +2160,70 @@ window.Bryst = (function(){
   }
 
   // ---- AK-markeringsark (Hedén/Akademikliniken): printbar operationsplanlægning ----
-  function printAkSheet(item){
+  // Én kodesti renderer både enkelt-side-ark og det samlede H+V-ark ved asymmetri:
+  // en "entry" = { item, meas (målsæt), tag ('H'/'V'/null) } med afledte værdier.
+  function akEntry(item, meas, sideKey){
     var w = Bryst.widthOf(item);
     var h = item.height_cm != null ? item.height_cm : w; // rund: højde = diameter
-    var proj = item.projection_cm || item.nominal_projection_cm;
-    var distalShare = item.shape === 'anatomical' ? 0.5 : 0.55;
-    var halfH = h * distalShare;
-    var hd = Bryst.hedenAssess(item, state.nimf, state.gland);
-    var lvc = Bryst.lvcOf(item);
+    return {
+      item: item, meas: meas,
+      sideKey: sideKey || null,
+      sideLabel: sideKey ? SIDE_LABEL[sideKey] : null,
+      tag: sideKey === 'right' ? 'H' : (sideKey === 'left' ? 'V' : null),
+      w: w, h: h,
+      proj: item.projection_cm || item.nominal_projection_cm,
+      distalShare: item.shape === 'anatomical' ? 0.5 : 0.55,
+      lvc: Bryst.lvcOf(item),
+      hd: Bryst.hedenAssess(item, meas.nimf, meas.gland)
+    };
+  }
+  function printAkSheet(item){
+    var sideKey = state.side !== 'same' ? state.side : null;
+    renderAkSheet([akEntry(item, measureSnapshot(), sideKey)]);
+  }
+  function latestPickForSide(sideLabel){
+    var list = Bryst.picks.list();
+    for (var i = list.length - 1; i >= 0; i--){
+      if (list[i]._side === sideLabel) return list[i];
+    }
+    return null;
+  }
+  function printAkSheetDual(){
+    // Aktiv sides mål ligger i state — synkronisér ind i sideStore før aflæsning.
+    if (state.side !== 'same') sideStore[state.side] = measureSnapshot();
+    var entries = [];
+    ['right', 'left'].forEach(function(key){
+      var item = latestPickForSide(SIDE_LABEL[key]);
+      var meas = sideStore[key];
+      if (item && meas) entries.push(akEntry(item, meas, key));
+    });
+    if (entries.length === 2) renderAkSheet(entries);
+  }
+  function renderAkSheet(entries){
+    var e0 = entries[0];
+    var dual = entries.length > 1;
+    // Værdier på tværs af sider: enkelt ark = tallet alene; H+V-ark = "H x / V y".
+    function joinVals(f){
+      if (!dual) return f(e0);
+      return entries.map(function(e){ return e.tag + ' ' + f(e); }).join(' / ');
+    }
+    var halfHTxt = joinVals(function(e){ return (e.h * e.distalShare).toFixed(1); });
+    var needTxt = joinVals(function(e){ return e.hd ? e.hd.needed.toFixed(1) : '—'; });
+    var areolaTxt = joinVals(function(e){ return e.hd ? (e.hd.needed - 2).toFixed(1) : '—'; });
+    var pctPart = dual
+      ? joinVals(function(e){ return Math.round(e.distalShare * 100) + ' %'; }) + ' af implantathøjden (rund 55 % / anatomisk 50 %)'
+      : Math.round(e0.distalShare * 100) + ' % af implantathøjden' + (e0.item.shape === 'anatomical' ? '' : '; rund: 55 %');
+    var idealCalc = joinVals(function(e){
+      return e.lvc != null ? e.lvc.toFixed(1) + ' + ' + (e.meas.gland / 2).toFixed(1) + ' ≈ ' + e.hd.needed.toFixed(1) : '—';
+    });
+    var verdictTxt = dual
+      ? entries.map(function(e){
+          return '<b>' + e.sideLabel.charAt(0).toUpperCase() + e.sideLabel.slice(1) + ':</b> målt <span class="val">' + e.meas.nimf.toFixed(1) + ' cm</span> → ' + (e.hd ? e.hd.label : '—');
+        }).join('<br>')
+      : 'målt papil→IMF (strakt) <span class="val">' + e0.meas.nimf.toFixed(1) + ' cm</span> → ' + (e0.hd ? e0.hd.label : '—');
+    var titleCat = entries.map(function(e){ return (e.item.catalog || '') + (e.tag ? ' ' + e.tag : ''); }).join(' + ');
     var today = new Date().toLocaleDateString('da-DK');
-    var win = window.open('', '_blank');
-    if (!win) return;
-    var html = '<!DOCTYPE html><html lang="da"><head><meta charset="utf-8"><title>AK-markeringsark ' + (item.catalog || '') + (state.side !== 'same' ? ' ' + SIDE_LABEL[state.side] : '') + ' — ' + Bryst.fileStamp() + '</title><style>' +
+    var html = '<!DOCTYPE html><html lang="da"><head><meta charset="utf-8"><title>AK-markeringsark ' + titleCat + ' — ' + Bryst.fileStamp() + '</title><style>' +
       '*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}' +
       'body{font-family:-apple-system,"Segoe UI",Arial,sans-serif;color:#22262A;max-width:660px;margin:0 auto;padding:46px 36px 60px;line-height:1.6;font-size:14px;}' +
       '.eyebrow{font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#A33B2B;margin-bottom:6px;}' +
@@ -2192,55 +2253,74 @@ window.Bryst = (function(){
       '<h1>AK-markeringsark (Hedén/Akademikliniken)</h1>' +
       '<div class="sub">Genereret ' + today + ' — ingen patientidentifikatorer. Alle afledte mål er geometriske estimater; verificér klinisk.</div>' +
       '<div class="rule"></div>' +
-      '<table><tr><th>Implantat</th><th>Katalog#</th><th>Vol</th><th>Ø/B</th><th>Højde</th><th>Proj</th><th>LVC (est.)</th></tr>' +
-      '<tr><td>' + Bryst.profileLabel(item) + (Bryst.textureLabel(item) ? ', ' + Bryst.textureLabel(item) : '') + '</td>' +
-      '<td><b>' + Bryst.catalogLabel(item) + '</b></td>' +
-      '<td><b>' + Bryst.volumeOf(item) + ' cc</b></td>' +
-      '<td><b>' + (w != null ? w.toFixed(1) + ' cm' : '—') + '</b></td>' +
-      '<td><b>' + (item.height_cm != null ? item.height_cm.toFixed(1) + ' cm' : '(= Ø)') + '</b></td>' +
-      '<td><b>' + (proj != null ? proj.toFixed(1) + ' cm' : '—') + '</b></td>' +
-      '<td><b>' + (lvc != null ? '≈ ' + lvc.toFixed(1) + ' cm' : '—') + '</b></td></tr></table>' +
+      '<table><tr>' + (dual ? '<th>Side</th>' : '') + '<th>Implantat</th><th>Katalog#</th><th>Vol</th><th>Ø/B</th><th>Højde</th><th>Proj</th><th>LVC (est.)</th></tr>' +
+      entries.map(function(e){
+        return '<tr>' + (dual ? '<td><b>' + e.sideLabel.charAt(0).toUpperCase() + e.sideLabel.slice(1) + '</b></td>' : '') +
+        '<td>' + Bryst.profileLabel(e.item) + (Bryst.textureLabel(e.item) ? ', ' + Bryst.textureLabel(e.item) : '') + '</td>' +
+        '<td><b>' + Bryst.catalogLabel(e.item) + '</b></td>' +
+        '<td><b>' + Bryst.volumeOf(e.item) + ' cc</b></td>' +
+        '<td><b>' + (e.w != null ? e.w.toFixed(1) + ' cm' : '—') + '</b></td>' +
+        '<td><b>' + (e.item.height_cm != null ? e.item.height_cm.toFixed(1) + ' cm' : '(= Ø)') + '</b></td>' +
+        '<td><b>' + (e.proj != null ? e.proj.toFixed(1) + ' cm' : '—') + '</b></td>' +
+        '<td><b>' + (e.lvc != null ? '≈ ' + e.lvc.toFixed(1) + ' cm' : '—') + '</b></td></tr>';
+      }).join('') + '</table>' +
 
-      akSketchSVG(halfH, lvc != null && hd ? hd.needed : null) +
+      akSketchSVG(halfHTxt, needTxt === '—' ? null : needTxt, areolaTxt === '—' ? null : areolaTxt) +
 
       '<h2>A · Primær augmentation (implantat tilpasses papillen)</h2>' +
       '<ol>' +
       '<li><b>NS-linjen:</b> arme eleveret 45° (hænder på hovedet) — overfør papilpositionen vandret til sternums midtlinje. NS-linjen forudsiger postoperativ papilposition og angiver samtidig øvre grænse for muskeldeling ved dual-plane (del altid distalt for linjen).</li>' +
-      '<li><b>ILP-linjen:</b> mål <span class="val">' + halfH.toFixed(1) + ' cm</span> (' + Math.round(distalShare * 100) + ' % af implantathøjden' + (item.shape === 'anatomical' ? '' : '; rund: 55 %') + ') distalt fra NS-linjen langs midtlinjen; træk vandret linje lateralt = implantatets nedre pol.</li>' +
-      '<li><b>Hudbehov i nedre pol:</b> ideal papil→IMF (maksimalt strakt) = LVC + kirtel-pinch/2 = <span class="val">' + (lvc != null ? lvc.toFixed(1) : '—') + ' + ' + (state.gland / 2).toFixed(1) + ' ≈ ' + (hd ? hd.needed.toFixed(1) : '—') + ' cm</span>. Markér med maksimalt strakt hud.</li>' +
-      '<li><b>Vurdering her:</b> målt papil→IMF (strakt) <span class="val">' + state.nimf.toFixed(1) + ' cm</span> → ' + (hd ? hd.label : '—') + '.</li>' +
+      '<li><b>ILP-linjen:</b> mål <span class="val">' + halfHTxt + ' cm</span> (' + pctPart + ') distalt fra NS-linjen langs midtlinjen; træk vandret linje lateralt = implantatets nedre pol.</li>' +
+      '<li><b>Hudbehov i nedre pol:</b> ideal papil→IMF (maksimalt strakt) = LVC + kirtel-pinch/2 = <span class="val">' + idealCalc + ' cm</span>. Markér med maksimalt strakt hud.</li>' +
+      '<li><b>Vurdering her:</b> ' + verdictTxt + '.</li>' +
       '<li>Ligger idealmålet ≤ 2 cm over ILP-linjen: incision ved idealmålet, dissektion distalt forbi ILP-linjen, folden resutureres på ILP-linjen (Scarpas fascie → thoraxfascien).</li>' +
       '</ol>' +
 
       '<h2>B · Mastopexy-augmentation (papillen tilpasses implantatet — omvendt planlægning)</h2>' +
       '<ol>' +
       '<li><b>Udgangspunkt:</b> eksisterende submammærfure = implantatets nedre pol (IMF = ILP). Forlæng furen til midtlinjen; korrigér evt. sideforskel i folde-højde (sænk/hæv ½ cm til samme niveau).</li>' +
-      '<li><b>Ny papilposition:</b> mål <span class="val">' + halfH.toFixed(1) + ' cm</span> proksimalt fra IMF-linjen i midtlinjen (arme hængende); forlæng derfra vandret lateralt <b>med armene eleveret 45°</b> — skæringen med brystmeridianen = ny papilposition. Kontrollér mod sternal notch-afstand, midtlinje-afstand og symmetri.</li>' +
-      '<li><b>Hud mellem areola og fold:</b> (LVC + kirtel-pinch/2) − halv areoladiameter ≈ <span class="val">' + (hd ? hd.needed.toFixed(1) : '—') + ' − 2,0 ≈ ' + (hd ? (hd.needed - 2).toFixed(1) : '—') + ' cm</span> (ved 4 cm areola). Styrer valget: periareolær / vertikal / inverteret-T.</li>' +
+      '<li><b>Ny papilposition:</b> mål <span class="val">' + halfHTxt + ' cm</span> proksimalt fra IMF-linjen i midtlinjen (arme hængende); forlæng derfra vandret lateralt <b>med armene eleveret 45°</b> — skæringen med brystmeridianen = ny papilposition. Kontrollér mod sternal notch-afstand, midtlinje-afstand og symmetri.</li>' +
+      '<li><b>Hud mellem areola og fold:</b> (LVC + kirtel-pinch/2) − halv areoladiameter ≈ <span class="val">' + needTxt + ' − 2,0 ≈ ' + areolaTxt + ' cm</span> (ved 4 cm areola). Styrer valget: periareolær / vertikal / inverteret-T.</li>' +
       '<li><b>Rækkefølge (to tempi i én seance):</b> implantatet lægges FØRST (via fold-incision + én vertikal søjle, ingen hudresektion endnu) → patienten sættes op → markeringer revurderes → papil flyttes → vertikal hudresektion → lille fold-excision, ingen spænding i T-krydset.</li>' +
       '<li><b>Ved 2-seance-plan:</b> stadie 1 (løftet) SKAL planlægges efter det implantat, der vælges i stadie 2 — afstanden papil→fold dimensioneres efter dets LVC (klassisk faldgrube, Hedén).</li>' +
       '</ol>' +
 
       '<h2>Kort opskrift (til rutinerede)</h2>' +
       '<div class="recipe">' +
-      '<b>A · Aug:</b> arme 45° → NS-linje · NS − h/2 (' + halfH.toFixed(1) + ') i midtlinjen → ILP · behov papil→fold = LVC + pinch/2 ≈ ' + (hd ? hd.needed.toFixed(1) : '—') + ' (strakt) · Δ = målt − behov: ≤ 0 OK · 0–2 aug alene (distal diss., fold sutureres på ILP) · &gt; 2 mastopexi<br>' +
-      '<b>B · Mx-aug:</b> IMF = ILP · ny papil = IMF + h/2 (' + halfH.toFixed(1) + ', midtlinje → lateralt m. arme 45°) · areola→fold ≈ ' + (hd ? hd.needed.toFixed(1) : '—') + ' − r<sub>areola</sub> ≈ ' + (hd ? (hd.needed - 2).toFixed(1) : '—') + ' · teknik: peri / vertikal / inv-T · implantat FØR hudresektion (fold-incision + én vertikal søjle) · sæt op → revurdér → papil → vertikal resektion → fold-excision uden T-spænding' +
+      '<b>A · Aug:</b> arme 45° → NS-linje · NS − h/2 (' + halfHTxt + ') i midtlinjen → ILP · behov papil→fold = LVC + pinch/2 ≈ ' + needTxt + ' (strakt) · Δ = målt − behov: ≤ 0 OK · 0–2 aug alene (distal diss., fold sutureres på ILP) · &gt; 2 mastopexi<br>' +
+      '<b>B · Mx-aug:</b> IMF = ILP · ny papil = IMF + h/2 (' + halfHTxt + ', midtlinje → lateralt m. arme 45°) · areola→fold ≈ ' + needTxt + ' − r<sub>areola</sub> ≈ ' + areolaTxt + ' · teknik: peri / vertikal / inv-T · implantat FØR hudresektion (fold-incision + én vertikal søjle) · sæt op → revurdér → papil → vertikal resektion → fold-excision uden T-spænding' +
       '</div>' +
 
-      '<div class="note">Mål lagt til grund: brystbredde ' + state.width.toFixed(1) + ' cm · SPP ' + state.spp + ' mm · IPP ' + state.ipp + ' mm · papil→IMF (strakt) ' + state.nimf.toFixed(1) + ' cm · kirtel-pinch ' + state.gland.toFixed(1) + ' cm' + (state.side !== 'same' ? ' · side: ' + SIDE_LABEL[state.side] : '') + '.</div>' +
+      entries.map(function(e){
+        return '<div class="note">Mål lagt til grund' + (e.sideLabel ? ' (' + e.sideLabel + ' side)' : '') + ': brystbredde ' + e.meas.width.toFixed(1) + ' cm · SPP ' + e.meas.spp + ' mm · IPP ' + e.meas.ipp + ' mm · papil→IMF (strakt) ' + e.meas.nimf.toFixed(1) + ' cm · kirtel-pinch ' + e.meas.gland.toFixed(1) + ' cm.</div>';
+      }).join('') +
+      contralateralNote(entries) +
       '<div class="footer">LVC (lower ventral curvature) er ikke opgivet af Mentor og er her estimeret geometrisk (kvart-ellipsebue af højde-andel × projektion) — Hedéns publicerede LVC-værdier gælder Allergan-implantater. Kilder: Hedén P, Mastopexy Augmentation with Form Stable Breast Implants, Clin Plast Surg 2009;36:91–104; Hedén, SFEP 2013. Filtrering, ikke anbefaling — endeligt implantat afgøres peroperativt med sizer.</div>' +
       '</body></html>';
+    var win = window.open('', '_blank');
+    if (!win) return;
     win.document.write(html);
     win.document.close();
     win.focus();
   }
 
+  // Enkelt-side-ark ved asymmetri: den anden sides mål og evt. valg med som note,
+  // så symmetrivurderingen ikke kræver to udskrifter holdt op mod hinanden.
+  function contralateralNote(entries){
+    if (entries.length > 1 || !entries[0].sideKey) return '';
+    var other = entries[0].sideKey === 'right' ? 'left' : 'right';
+    var meas = other === state.side ? measureSnapshot() : sideStore[other];
+    if (!meas) return '';
+    var pick = latestPickForSide(SIDE_LABEL[other]);
+    return '<div class="note">Kontralateral (' + SIDE_LABEL[other] + '): bredde ' + meas.width.toFixed(1) + ' cm · SPP ' + meas.spp + ' mm · IPP ' + meas.ipp + ' mm · papil→IMF (strakt) ' + meas.nimf.toFixed(1) + ' cm · kirtel-pinch ' + meas.gland.toFixed(1) + ' cm' + (pick ? ' · valgt implantat: ' + Bryst.catalogLabel(pick) : ' · intet implantat valgt endnu') + '. Samlet H+V-ark kan genereres med ét klik fra knappen under side-vælgeren.</div>';
+  }
+
   // Abstrakt skitse af optegningerne (frontalt, jf. billedpolitik: kun linjediagrammer).
   // Panel A: augmentation (NS → ILP nedad). Panel B: mastopexy-aug (IMF → ny papil opad).
-  function akSketchSVG(halfH, needed){
-    var hTxt = halfH.toFixed(1);
-    var nTxt = needed != null ? needed.toFixed(1) : '—';
-    var aTxt = needed != null ? (needed - 2).toFixed(1) : '—';
+  // Tekstværdier leveres færdigformaterede — ved H+V-ark som "H 5,6 / V 5,2".
+  function akSketchSVG(hTxt, nTxt, aTxt){
+    if (nTxt == null) nTxt = '—';
+    if (aTxt == null) aTxt = '—';
     var ink = '#22262A', soft = '#9AA0A6', acc = '#A33B2B';
     return '<div class="sketch"><svg viewBox="0 0 680 268" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Skitse af AK-markeringerne">' +
       // ---------- Panel A ----------
@@ -2294,8 +2374,29 @@ window.Bryst = (function(){
       '<line x1="522" y1="207" x2="566" y2="207" stroke="' + acc + '" stroke-width="1.3"/>' +
       '<text x="566" y="196" font-family="ui-monospace,Menlo,monospace" font-size="9" fill="' + acc + '">areola→fold ≈ ' + aTxt + '</text>' +
       '</svg>' +
-      '<div class="sketch-cap">Skematisk — ikke i målestok. Røde mål er implantat-afledte (' + hTxt + ' = halv implantathøjde' + (needed != null ? '; ' + nTxt + ' = LVC + kirtel-pinch/2' : '') + ').</div></div>';
+      '<div class="sketch-cap">Skematisk — ikke i målestok. Røde mål er implantat-afledte (' + hTxt + ' = halv implantathøjde' + (nTxt !== '—' ? '; ' + nTxt + ' = LVC + kirtel-pinch/2' : '') + ').</div></div>';
   }
+
+  // ---- Samlet H+V-ark: knap under side-vælgeren, aktiv når begge sider har et valg ----
+  function updateDualAk(){
+    var wrap = $('dualAkWrap');
+    if (state.side === 'same'){ wrap.style.display = 'none'; return; }
+    wrap.style.display = '';
+    var btn = $('dualAkBtn'), hint = $('dualAkHint');
+    var r = latestPickForSide(SIDE_LABEL.right), l = latestPickForSide(SIDE_LABEL.left);
+    if (state.context !== 'augmentation' || state.expanderSearch){
+      btn.disabled = true;
+      hint.textContent = 'AK-arket gælder augmentationsplanlægning (ikke ekspander-søgning/rekonstruktion).';
+    } else if (r && l){
+      btn.disabled = false;
+      hint.textContent = 'Højre: ' + Bryst.catalogLabel(r) + ' · Venstre: ' + Bryst.catalogLabel(l) + ' — begge siders mål og verdikter samles på ét ark.';
+    } else {
+      btn.disabled = true;
+      hint.textContent = 'Markér et implantat "Til patientoversigt" på hver side (højre: ' + (r ? '✓' : 'mangler') + ' · venstre: ' + (l ? '✓' : 'mangler') + ') — så samles begge sider på ét ark her.';
+    }
+  }
+  $('dualAkBtn').addEventListener('click', printAkSheetDual);
+  Bryst.picks.onChange(updateDualAk);
 
   // ---- Retur-bjælke, når Modul 1 er åbnet fra et patientmodul (#modul1?fra=modul2/3) ----
   var returnTarget = null;
