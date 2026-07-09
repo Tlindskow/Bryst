@@ -2607,7 +2607,11 @@ window.Bryst = (function(){
   // ---- "Valgt:"-badge i headeren: viser de markerede implantater, så det
   // aldrig er i tvivl hvad der er valgt. Ens implantat på begge sider vises
   // som "2× navn"; forskellige som "H navn · V navn".
-  function pickLabel(item){ return item.catalog || item.catalog_3_suture_tabs || Bryst.catalogLabel(item); }
+  function pickLabel(item){
+    var name = Bryst.profileLabel(item);
+    var vol = Bryst.volumeOf(item);
+    return (name || Bryst.catalogLabel(item)) + (vol ? ' - ' + vol + ' cc' : '');
+  }
   function updatePickBadge(){
     var badge = $('m1PickBadge');
     var list = Bryst.picks.list();
@@ -2620,12 +2624,13 @@ window.Bryst = (function(){
       if (right.length === 1 && left.length === 1 && pickLabel(right[0]) === pickLabel(left[0])){
         parts.push('2× <b>' + pickLabel(right[0]) + '</b>');
       } else {
-        if (right.length) parts.push('<span class="pb-side">H</span> <b>' + right.map(pickLabel).join('</b>, <b>') + '</b>');
-        if (left.length) parts.push('<span class="pb-side">V</span> <b>' + left.map(pickLabel).join('</b>, <b>') + '</b>');
+        right.forEach(function(p){ parts.push('<span class="pb-side">Højre</span> <b>' + pickLabel(p) + '</b>'); });
+        left.forEach(function(p){ parts.push('<span class="pb-side">Venstre</span> <b>' + pickLabel(p) + '</b>'); });
       }
     }
-    if (noside.length){ parts.push('<b>' + noside.map(pickLabel).join('</b>, <b>') + '</b>'); }
-    badge.innerHTML = '<span class="pb-label">Valgt: </span>' + parts.join(' <span class="pb-side">·</span> ');
+    noside.forEach(function(p){ parts.push('<b>' + pickLabel(p) + '</b>'); });
+    var sep = parts.length > 1 ? '<br>' : '';
+    badge.innerHTML = '<span class="pb-label">Valgt: </span>' + parts.join(sep);
     badge.hidden = false;
   }
   Bryst.picks.onChange(function(){ $('m1PickCount').textContent = Bryst.picks.count(); updatePickBadge(); });
