@@ -259,6 +259,12 @@
     line-height:1.6;
   }
   header.instrument .stamp b{ color:var(--paper); font-weight:600; }
+  header.instrument .pick-badge{
+    font-family:var(--mono); font-size:11px; color:#AEB8B5; margin-top:7px; line-height:1.5;
+  }
+  header.instrument .pick-badge .pb-label{ color:#8A9491; letter-spacing:.04em; }
+  header.instrument .pick-badge b{ color:var(--redline); font-weight:600; }
+  header.instrument .pick-badge .pb-side{ color:#AEB8B5; }
 
   /* ---------- Layout ---------- */
   .console{
@@ -1115,6 +1121,7 @@
   <div>
     <div class="eyebrow">Implantatvalg</div>
     <h1><a class="brand-home" href="#" title="Til forsiden">Bryst</a><span class="module-tag">Lægemodul · Modul 1</span></h1>
+    <div class="pick-badge" id="m1PickBadge" hidden></div>
   </div>
   <div class="head-right">
     <div class="stamp">
@@ -2597,7 +2604,32 @@ window.Bryst = (function(){
     e.preventDefault();
     if (returnTarget) location.hash = returnTarget;
   });
-  Bryst.picks.onChange(function(){ $('m1PickCount').textContent = Bryst.picks.count(); });
+  // ---- "Valgt:"-badge i headeren: viser de markerede implantater, så det
+  // aldrig er i tvivl hvad der er valgt. Ens implantat på begge sider vises
+  // som "2× navn"; forskellige som "H navn · V navn".
+  function pickLabel(item){ return item.catalog || item.catalog_3_suture_tabs || Bryst.catalogLabel(item); }
+  function updatePickBadge(){
+    var badge = $('m1PickBadge');
+    var list = Bryst.picks.list();
+    if (!list.length){ badge.hidden = true; badge.innerHTML = ''; return; }
+    var right = list.filter(function(p){ return p._side === 'højre'; });
+    var left = list.filter(function(p){ return p._side === 'venstre'; });
+    var noside = list.filter(function(p){ return !p._side; });
+    var parts = [];
+    if (right.length || left.length){
+      if (right.length === 1 && left.length === 1 && pickLabel(right[0]) === pickLabel(left[0])){
+        parts.push('2× <b>' + pickLabel(right[0]) + '</b>');
+      } else {
+        if (right.length) parts.push('<span class="pb-side">H</span> <b>' + right.map(pickLabel).join('</b>, <b>') + '</b>');
+        if (left.length) parts.push('<span class="pb-side">V</span> <b>' + left.map(pickLabel).join('</b>, <b>') + '</b>');
+      }
+    }
+    if (noside.length){ parts.push('<b>' + noside.map(pickLabel).join('</b>, <b>') + '</b>'); }
+    badge.innerHTML = '<span class="pb-label">Valgt: </span>' + parts.join(' <span class="pb-side">·</span> ');
+    badge.hidden = false;
+  }
+  Bryst.picks.onChange(function(){ $('m1PickCount').textContent = Bryst.picks.count(); updatePickBadge(); });
+  updatePickBadge();
   updateReturnBar();
 
   // ---- "Ny patient": nulstil dette moduls tilstand og UI ----
