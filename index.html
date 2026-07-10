@@ -768,6 +768,37 @@
   }
   .ev-cite b{ color:var(--ev-soft); font-weight:600; }
 
+  /* Forsidens samlede evidens-indgang + hub */
+  .entry-evidence{ text-align:center; margin:6px 0 26px; }
+  .entry-ev-btn{
+    display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+    font-family:var(--mono); font-size:12px; letter-spacing:.04em;
+    color:#6B7570; background:rgba(255,255,255,.55); border:1px solid rgba(120,130,125,.32);
+    border-radius:999px; padding:8px 18px; transition:all .2s ease; backdrop-filter:blur(3px);
+  }
+  .entry-ev-btn:hover{ color:#A33B2B; border-color:rgba(163,59,43,.5); background:rgba(255,255,255,.8); }
+  .entry-ev-btn:focus-visible{ outline:2px solid #A33B2B; outline-offset:3px; }
+  .entry-ev-btn .ev-i{
+    display:inline-grid; place-items:center; width:16px; height:16px; border-radius:50%;
+    border:1px solid currentColor; font-size:10px; font-style:italic; font-family:Georgia,serif; line-height:1;
+  }
+  .ev-hub-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:8px; }
+  @media (max-width:560px){ .ev-hub-grid{ grid-template-columns:1fr; } }
+  .ev-hub-card{
+    display:block; text-align:left; cursor:pointer; width:100%;
+    background:var(--hub-bg,#fff); border:1px solid var(--hub-line,#e2ded7); border-left:3px solid var(--hub-acc,#A33B2B);
+    border-radius:3px; padding:16px 18px; transition:all .18s ease; font-family:var(--sans);
+  }
+  .ev-hub-card:hover{ transform:translateY(-2px); box-shadow:0 8px 22px rgba(40,34,26,.12); }
+  .ev-hub-card:focus-visible{ outline:2px solid var(--hub-acc,#A33B2B); outline-offset:2px; }
+  .ev-hub-card .hub-eyebrow{ font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--hub-acc,#A33B2B); }
+  .ev-hub-card .hub-name{ font-size:16px; font-weight:600; color:#22262A; margin:3px 0 5px; }
+  .ev-hub-card .hub-desc{ font-size:12.5px; line-height:1.5; color:#5A6066; }
+  .ev-hub-c1{ --hub-acc:#9C3B2B; }
+  .ev-hub-c2{ --hub-acc:#9C4F60; }
+  .ev-hub-c3{ --hub-acc:#4F5F52; }
+  .ev-hub-c4{ --hub-acc:#155A66; }
+
   /* ---- Kobling til Modul 1 (implantatvalg) fra patientmodulerne ---- */
   .m2-open-m1{
     display:inline-block; margin-top:10px; font-size:12px; font-family:var(--sans); font-weight:600;
@@ -1129,7 +1160,50 @@
       </a>
     </nav>
 
+    <div class="entry-evidence">
+      <button class="entry-ev-btn" id="pickerEvTrigger" aria-haspopup="dialog"><span class="ev-i">i</span>Evidensgrundlag — litteraturen bag værktøjet</button>
+    </div>
+
     <footer class="entry-stamp">Datagrundlag: Mentor Product Guide 2023 · DBCG v3.1 (godk. 27-11-2024) · 100 % stateless — intet gemmes</footer>
+  </div>
+</div>
+
+<!-- ===================== Evidensgrundlag · samlet hub (fra forsiden) ===================== -->
+<div class="ev-overlay" id="evHubOverlay" data-ev="m1" role="dialog" aria-modal="true" aria-labelledby="evHubTitle">
+  <div class="ev-sheet">
+    <div class="ev-head">
+      <div>
+        <div class="ev-eyebrow">Evidensgrundlag</div>
+        <h2 id="evHubTitle" style="font-family:var(--sans);font-weight:600;">Litteraturen bag værktøjet</h2>
+        <p class="ev-sub">De kliniske referencer bag hvert modul — for den, der vil dybere ned. Vælg et område.</p>
+      </div>
+      <button class="ev-close" id="evHubClose" aria-label="Luk">✕</button>
+    </div>
+    <div class="ev-hub-grid">
+      <button class="ev-hub-card ev-hub-c1" data-ev-target="m1EvOverlay">
+        <div class="hub-eyebrow">Modul 1 · Lægemodul</div>
+        <div class="hub-name">Dimensionering &amp; AK-metoden</div>
+        <div class="hub-desc">Tebbetts' bredderegel, højde og projektion, LVC-geometrien bag markeringsarket.</div>
+      </button>
+      <button class="ev-hub-card ev-hub-c2" data-ev-target="m2EvOverlay">
+        <div class="hub-eyebrow">Modul 2 · Privatmodul</div>
+        <div class="hub-name">Ptose, augmentation &amp; løft</div>
+        <div class="hub-desc">Regnault-gradering, Hedéns 2-cm-regel, mastopexi-teknikvalg og kombinationsrækkefølge.</div>
+      </button>
+      <button class="ev-hub-card ev-hub-c3" data-ev-target="m3EvOverlay">
+        <div class="hub-eyebrow">Modul 3 · Sygehusmodul</div>
+        <div class="hub-name">Rekonstruktion efter brystkræft</div>
+        <div class="hub-desc">Blondeels 3-trins-analyse, ⅛/⅜-volumenreglen, forløbstidslinjen og DBCG's kriterier.</div>
+      </button>
+      <button class="ev-hub-card ev-hub-c4" data-ev-target="kEvOverlay">
+        <div class="hub-eyebrow">Tillæg · Katalog</div>
+        <div class="hub-name">Mentors produktfamilier</div>
+        <div class="hub-desc">Form, kohæsivitet og fyldning — sådan adskiller de seks serier sig.</div>
+      </button>
+    </div>
+    <div class="ev-cite">
+      Hvert område bygger på offentliggjort plastikkirurgisk litteratur og DBCG's retningslinje. Skemaerne er originale, forenklede fremstillinger — beslutningsstøtte, ikke kliniske protokoller.
+    </div>
   </div>
 </div>
 
@@ -2187,21 +2261,37 @@ window.Bryst = (function(){
 
   // Diskret evidensgrundlag-overlay: åbnes af triggeren, lukkes af kryds,
   // baggrundsklik eller Escape. Genbruges af alle moduler (litteraturlaget).
+  // Et overlay kan bære en _returnTo (id på et andet overlay) — så et panel
+  // åbnet fra forsidens evidens-hub vender tilbage til hub'en ved luk.
+  function openEvidence(overlayId, returnToId){
+    var overlay = document.getElementById(overlayId);
+    if (!overlay) return;
+    overlay._returnTo = returnToId || null;
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    var close = overlay.querySelector('.ev-close');
+    if (close) close.focus();
+  }
+  function shutEvidence(overlay){
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+    var rt = overlay._returnTo; overlay._returnTo = null;
+    if (rt) openEvidence(rt);
+  }
   function wireEvidence(triggerId, overlayId, closeId){
     var trigger = document.getElementById(triggerId);
     var overlay = document.getElementById(overlayId);
     var close = document.getElementById(closeId);
     if (!trigger || !overlay || !close) return;
-    function open(){ overlay.classList.add('open'); document.body.style.overflow = 'hidden'; close.focus(); }
-    function shut(){ overlay.classList.remove('open'); document.body.style.overflow = ''; trigger.focus(); }
-    trigger.addEventListener('click', open);
-    close.addEventListener('click', shut);
-    overlay.addEventListener('click', function(e){ if (e.target === overlay) shut(); });
-    document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && overlay.classList.contains('open')) shut(); });
+    trigger.addEventListener('click', function(){ openEvidence(overlayId); if (!overlay._returnTo) trigger.blur(); });
+    close.addEventListener('click', function(){ shutEvidence(overlay); });
+    overlay.addEventListener('click', function(e){ if (e.target === overlay) shutEvidence(overlay); });
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && overlay.classList.contains('open')) shutEvidence(overlay); });
   }
 
   return {
     wireEvidence: wireEvidence,
+    openEvidence: openEvidence,
     CATALOG: CATALOG,
     PERMANENT_CATEGORIES: PERMANENT_CATEGORIES,
     EXPANDER_CATEGORIES: EXPANDER_CATEGORIES,
@@ -2277,6 +2367,17 @@ window.Bryst = (function(){
   }
   window.addEventListener('hashchange', function(){ showScreen(location.hash); });
   showScreen(location.hash);
+
+  // Forsidens samlede evidens-hub: knappen åbner hub'en; hvert kort åbner det
+  // pågældende moduls fulde evidenspanel og vender tilbage til hub'en ved luk.
+  Bryst.wireEvidence('pickerEvTrigger', 'evHubOverlay', 'evHubClose');
+  document.querySelectorAll('.ev-hub-card').forEach(function(card){
+    card.addEventListener('click', function(){
+      var hub = document.getElementById('evHubOverlay');
+      hub.classList.remove('open'); hub._returnTo = null;
+      Bryst.openEvidence(card.getAttribute('data-ev-target'), 'evHubOverlay');
+    });
+  });
 })();
 </script>
 

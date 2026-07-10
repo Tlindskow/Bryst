@@ -1,7 +1,7 @@
 // Bryst — service worker til offline-brug (PWA).
 // Cacher kun selve app-skallen (statiske filer). Ingen patientdata gemmes nogensinde —
 // værktøjet er 100% stateless, og det ændrer denne service worker ikke ved.
-const CACHE_VERSION = 'bryst-v11';
+const CACHE_VERSION = 'bryst-v12';
 const APP_SHELL = [
   './',
   './index.html',
